@@ -16,7 +16,7 @@
 
 import unittest
 
-from napalm_skeleton import skeleton
+from napalm_brocade_fastiron import FastIron
 from napalm_base.test.base import TestConfigNetworkDriver
 
 

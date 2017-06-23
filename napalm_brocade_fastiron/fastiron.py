@@ -1,4 +1,4 @@
-# Copyright 2016 Dravetech AB. All rights reserved.
+# Copyright 2017 Brocade Communications. All rights reserved.
 #
 # The contents of this file are licensed under the Apache License, Version 2.0
 # (the "License"); you may not use this file except in compliance with the
@@ -13,7 +13,7 @@
 # the License.
 
 """
-Napalm driver for Skeleton.
+Napalm driver for Brocade FastIron.
 
 Read https://napalm.readthedocs.io for more information.
 """
@@ -28,8 +28,8 @@ from napalm_base.exceptions import (
     )
 
 
-class SkeletonDriver(NetworkDriver):
-    """Napalm driver for Skeleton."""
+class FastIron(NetworkDriver):
+    """Napalm driver for FastIron."""
 
     def __init__(self, hostname, username, password, timeout=60, optional_args=None):
         """Constructor."""
@@ -42,10 +42,17 @@ class SkeletonDriver(NetworkDriver):
         if optional_args is None:
             optional_args = {}
 
+        self.client = SSHClient()
+        self.client.load_system_host_keys()
+        
+
+
     def open(self):
         """Implementation of NAPALM method open."""
-        pass
+        client.connect('ssh.example.com')
+        stdin, stdout, stderr = client.exec_command('ls -l')
 
     def close(self):
         """Implementation of NAPALM method close."""
+        self.client.close()
         pass
