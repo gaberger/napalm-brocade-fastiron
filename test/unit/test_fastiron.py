@@ -16,36 +16,30 @@ import textfsm
 from napalm_brocade_fastiron.utils.utils import send_command, read_txt_file
 
 
+def send_command(command):
+    """Wrapper for self.device.send.command().
+    If command is a list will iterate through commands until valid command.
+    """
+    try:
+        if isinstance(command, list):
+            for cmd in command:
+                # output = self.session.send_command(cmd)
+                cmd = re.sub(r'[\[\]\*\^\+\s\|]', '_', cmd)
+                output = read_txt_file("test/unit/fastiron/mock_data/{}.txt".format(cmd)).read()
+                return output
+                # return py23_compat.text_type(output)
 
-def _send_command(command):
-    
-        """Wrapper for self.device.send.command().
-        If command is a list will iterate through commands until valid command.
-        """
-        try:
-            if isinstance(command, list):
-                for cmd in command:
-                    # output = self.session.send_command(cmd)
-                      cmd = re.sub(r'[\[\]\*\^\+\s\|]', '_', cmd)
-                      output = read_txt_file("test/unit/fastiron/mock_data/{}.txt".format(cmd)).read()
-                      return output
-    #         return py23_compat.text_type(output)
-
-            else:
-                 cmd = re.sub(r'[\[\]\*\^\+\s\|]', '_', command)
-                 output = read_txt_file("test/unit/fastiron/mock_data/{}.txt".format(cmd)).read()
-            return output
-        except:
-            raise
+        else:
+            cmd = re.sub(r'[\[\]\*\^\+\s\|]', '_', command)
+            output = read_txt_file("test/unit/fastiron/mock_data/{}.txt".format(cmd)).read()
+        return output
+    except:
+        raise
 
 
 class TestGetterFastIronDriver(unittest.TestCase):
     shouldMock = True
 
-    # Proxy for mocking
-    def send_command(command):
-        return _send_command(command)
-    
     def skipUnlessHasattr(obj, attr):
         if hasattr(obj, attr):
             return lambda func: func
@@ -63,26 +57,31 @@ class TestGetterFastIronDriver(unittest.TestCase):
         cls.device = napalm_brocade_fastiron.fastiron.FastIronDriver(ipaddr, user, password)
         if not cls.shouldMock:
             cls.device.open()
-    
+
     @unittest.skipUnless(shouldMock==True, "Not Mocking")
-    @mock.patch('napalm_brocade_fastiron.fastiron.FastIronDriver.send_command', side_effect=send_command)
-    def test_show_version_mock(self, mock):
+    @mock.patch('napalm_brocade_fastiron.fastiron.FastIronDriver.send_command',
+                side_effect=send_command)
+    def test_show_version_mock(self, mock_):
         result = self.device.show_version()
-        self.assertEqual(result, [['08.0.40bbT211', 'ICX7450-48', 'CYX3318M0Y1', '6', '16', '35', '37']])
+        exp_res = [['08.0.40bbT211', 'ICX7450-48', 'CYX3318M0Y1', '6', '16', '35', '37']]
+        self.assertEqual(result, exp_res)
 
     @unittest.skipUnless(shouldMock==True, "Not Mocking")
     @mock.patch('napalm_brocade_fastiron.fastiron.FastIronDriver.send_command', side_effect=send_command)
     def test_show_interfaces_mock(self, mock):
         result = self.device.show_interfaces()
-        self.assertEqual(result[0], ['GigabitEthernet1/1/1', 'disabled', 'down', '5', '17', '53', '9', '609c.9f31.b160', 'unknown', 'to196PC'])
-    
+        exp_res = ['GigabitEthernet1/1/1', 'disabled', 'down', '5', '17', '53',
+                   '9', '609c.9f31.b160', 'unknown', 'to196PC']
+        self.assertEqual(result[0], exp_res)
+
     @unittest.skipUnless(shouldMock==False, "Mocking")
     def test_show_version(self):
         result = self.device.show_version()
         # TODO Fix this because the uptime results are dynamic.
-        self.assertEqual(result,[[u'08.0.40bbT211', u'ICX7450-48', u'CYX3318M0Y1', u'6', u'16', u'38', u'2']])
+        exp_res = [[u'08.0.40bbT211', u'ICX7450-48', u'CYX3318M0Y1', u'6', u'16', u'38', u'2']]
+        self.assertEqual(result, exp_res)
     # TODO FIX THIS
-    
+
     @unittest.skipUnless(shouldMock==False, "Mocking")
     def test_show_interfaces(self):
         result = self.device.show_interfaces()
