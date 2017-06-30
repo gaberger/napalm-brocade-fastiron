@@ -27,32 +27,97 @@ from napalm_base.exceptions import (
     CommandErrorException,
     )
 
+from utils.utils import read_txt_file
 
-class FastIron(NetworkDriver):
+from netmiko import ConnectHandler
+import textfsm
+import socket
+
+class FastIronDriver(NetworkDriver):
     """Napalm driver for FastIron."""
-
     def __init__(self, hostname, username, password, timeout=60, optional_args=None):
         """Constructor."""
-        self.device = None
         self.hostname = hostname
         self.username = username
         self.password = password
-        self.timeout = timeout
+        self.timeout = timeout        
 
         if optional_args is None:
             optional_args = {}
 
-        self.client = SSHClient()
-        self.client.load_system_host_keys()
-        
-
-
     def open(self):
         """Implementation of NAPALM method open."""
-        client.connect('ssh.example.com')
-        stdin, stdout, stderr = client.exec_command('ls -l')
-
+        self.session = ConnectHandler(device_type = 'brocade_fastiron',
+                                      ip =   self.hostname,
+                                      username =  self.username,
+                                      password = self.password,
+                                      secret = "test",    
+                                      verbose = True,
+                                      use_keys = False,
+                                      session_timeout = 300)
+        self.session.session_preparation()
+        
     def close(self):
         """Implementation of NAPALM method close."""
-        self.client.close()
+        self.session.disconnect()
+
+    def send_command(self, command):
+        """Wrapper for self.device.send.command().
+        If command is a list will iterate through commands until valid command.
+        """
+        try:
+            if isinstance(command, list):
+                for cmd in command:
+                    output = self.session.send_command(cmd)
+                    # TODO Check exception handling
+                    if "% Invalid" not in output:
+                        break
+            else:
+                output = self.session.send_command(command)
+            return output
+        except (socket.error, EOFError) as e:
+            raise ConnectionClosedException(str(e))
+
+    def show_version(self):
+        output = self.send_command(['show version'])
+        tplt = read_txt_file("napalm_brocade_fastiron/utils/textfsm_templates/fastiron_show_version.template")
+        t = textfsm.TextFSM(tplt)
+        result = t.ParseText(output)
+        return result
+
+    def show_interfaces(self):
+        output = self.send_command(['show interfaces'])
+        tplt = read_txt_file("napalm_brocade_fastiron/utils/textfsm_templates/fastiron_show_interfaces.template")
+        t = textfsm.TextFSM(tplt)
+        result = t.ParseText(output)
+        return result
+
+
+    def get_facts(self):
+            commands = []
+            commands.append('show version')
+
+            try:
+                result = self.send_command(commands)
+                print(result)
+                facts = p.parse_get_facts(result)
+            except:
+                raise
+
+            return {
+                    'hostname': "-".join((facts['model'], facts['os_version'])),
+                    'fqdn': "-".join((facts['model'], facts['os_version'])),
+                    'vendor': u'Brocade',
+                    'model': facts['model'],
+                    'serial_number': facts['serial_no'],
+                    'os_version': facts['os_version'],
+                    'uptime': facts['uptime'],
+                    # 'interface_list': interfaces,
+                }
+
+            return sv
+
+    def get_interfaces(self):
         pass
+
+    

@@ -13,4 +13,5 @@
 # the License.
 
 """napalm-brocade-fastiron package."""
-from napalm_brocade_fastiron import FastIron
+from fastiron import FastIronDriver
+__all__ = ['FastIron']
