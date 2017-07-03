@@ -17,7 +17,7 @@ fortune.
 ### Before starting
 
 1. Pick a name. Something that can easily identify which NOS you are supporting. From now on we will
-call it `SKELETON` so everytime you see `SKELETON` on this repo, replace it with the name you just
+call it `SKELETON` so every time you see `SKELETON` on this repo, replace it with the name you just
 picked.
 1. Let the `napalm` community know that you are planning to write a new driver. You can try reaching
 out on slack or on the mailing list. Someone will create a repo for you under the
@@ -61,6 +61,9 @@ code that will assume they are there.
 them to this file. Please, don't forget to set the correct paths.
 
 ### The Tests
+
+* To run all mock tests run `test/test_mock.py` inside the virtual environment.
+* To run all tests on real devices run `test/test_device.py` inside the virtual environment.
 
 Code for testing is inside the `test` folder.
 
