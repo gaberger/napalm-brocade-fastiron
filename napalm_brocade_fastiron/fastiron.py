@@ -117,7 +117,5 @@ class FastIronDriver(NetworkDriver):
 
             return sv
 
-    def get_interfaces(self):
-        pass
 
     
