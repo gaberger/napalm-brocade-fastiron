@@ -32,6 +32,7 @@ from utils.utils import read_txt_file, convert_uptime
 from netmiko import ConnectHandler
 import textfsm
 import socket
+import StringIO
 
 class FastIronDriver(NetworkDriver):
     """Napalm driver for FastIron."""
@@ -47,7 +48,7 @@ class FastIronDriver(NetworkDriver):
 
     def open(self):
         """Implementation of NAPALM method open."""
-        self.session = ConnectHandler(device_type = 'brocade_fastiron',
+        self.driver = ConnectHandler(device_type = 'brocade_fastiron',
                                       ip =   self.hostname,
                                       username =  self.username,
                                       password = self.password,
@@ -55,7 +56,7 @@ class FastIronDriver(NetworkDriver):
                                       verbose = True,
                                       use_keys = False,
                                       session_timeout = 300)
-        self.session.session_preparation()
+        self.driver.session_preparation()
         
     def close(self):
         """Implementation of NAPALM method close."""
@@ -67,13 +68,14 @@ class FastIronDriver(NetworkDriver):
         """
         try:
             if isinstance(command, list):
+                output = ""
                 for cmd in command:
-                    output = self.session.send_command(cmd)
+                    output = output + self.driver.send_command(cmd)
                     # TODO Check exception handling
-                    if "% Invalid" not in output:
-                        break
+                    # if "% Invalid" not in output:
+                        # break
             else:
-                output = self.session.send_command(command)
+                output = self.driver.send_command(command)
             return output
         except (socket.error, EOFError) as e:
             raise ConnectionClosedException(str(e))
@@ -108,6 +110,38 @@ class FastIronDriver(NetworkDriver):
                 interfaces.append(entry)
         return interfaces
 
+
+    # Napalm API
+
+    def get_config(self, retrieve='all'):
+        test = self.send_command(['show running-config', 'show config'])
+
+        running_config_buffer = StringIO.StringIO()
+        startup_config_buffer = StringIO.StringIO()
+
+        stringbuffer = StringIO.StringIO(test)
+        startup = False
+
+        for line in stringbuffer.readlines():
+            if 'Startup-config' in line:
+                if not startup:        
+                    startup = True
+            if startup:
+                startup_config_buffer.write(line)
+            else:
+                running_config_buffer.write(line)
+
+        running_config = running_config_buffer.getvalue()
+        startup_config = startup_config_buffer.getvalue()
+
+        running_config_buffer.close()
+        startup_config_buffer.close()
+
+        config = {"running" : running_config,
+                    "candidate": "",
+                    "startup": startup_config}
+
+        return config
 
     def get_facts(self):
             commands = []

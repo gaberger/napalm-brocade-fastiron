@@ -37,10 +37,10 @@ def send_command(command):
     """
     try:
         if isinstance(command, list):
+            output = ""
             for cmd in command:
                 cmd = re.sub(r'[\[\]\*\^\+\s\|]', '_', cmd)
-                output = read_txt_file("test/unit/fastiron/mock_data/{}.txt".format(cmd)).read()
-                return output
+                output = output + read_txt_file("test/unit/fastiron/mock_data/{}.txt".format(cmd)).read()
         else:
             cmd = re.sub(r'[\[\]\*\^\+\s\|]', '_', command)
             output = read_txt_file("test/unit/fastiron/mock_data/{}.txt".format(cmd)).read()
@@ -59,10 +59,19 @@ def test_show_version(test_obj, device, exp_result):
 
 def test_show_interfaces(test_obj, device, exp_result):
     """Tests mocked expections of FastIronDriver.show_interfaces()"""
-    result = device.show_interfaces()[0]
-    result.pop('uptime', None)
-    test_obj.assertEqual(result, exp_result)
+    result = device.show_interfaces()
+    interface = result[0]
+    interface.pop('uptime', None)
+    test_obj.assertEqual(interface, exp_result)
 
+
+
+# Napalm API
+
+def test_get_config(test_obj, device, exp_result):
+    """Tests mocked expections of FastIronDriver.show_interfaces()"""
+    result = device.get_config()
+    test_obj.assertEqual(result, exp_result)
 
 ### Mock Tests ###
 
@@ -105,11 +114,18 @@ class TestGetterFastIronDriverMock(unittest.TestCase):
         exp_res = {'oper': 'down', 'description': 'to196PC', 'admin': 'disabled', 'link_addr': '609c.9f31.b160', 'speed': 'unknown', 'name': 'GigabitEthernet1/1/1'}
         test_show_interfaces(self, self.device, exp_res)
 
+    def test_get_config_mock(self):
+        """Tests mocked expections of FastIronDriver.show_config()"""
+        exp_res = {'running': "Current configuration:\n!\nver 08.0.40bbT211\n!\nstack unit 1\n  module 1 icx7450-48-port-management-module\n  module 2 icx7400-xgf-4port-40g-module\n  module 3 icx7400-qsfp-1port-40g-module\n  module 4 icx7400-qsfp-1port-40g-module\n!\n!\n!\n!\n!\nvlan 1 name DEFAULT-VLAN by port\n!\nvlan 4 by port\n untagged ethe 1/1/10\n!\nvlan 300 by port\n untagged ethe 1/1/13\n!\nvlan 2001 by port\n untagged ethe 1/1/11\n!\n!\n!\n!\nauthentication\n critical-vlan 2001\n auth-default-vlan 4\n restricted-vlan 300\n re-authentication\n reauth-period 120\n pass-through lldp\n dot1x enable\n dot1x enable ethe 1/1/1\n dot1x max-req 3\n dot1x timeout quiet-period 15\n dot1x timeout supplicant 2\n!\naaa authentication enable default local\naaa authentication dot1x default radius\naaa authentication login default local\naaa accounting dot1x default start-stop radius\nip address 10.21.237.131 255.255.255.128\nno ip dhcp-client enable\nip default-gateway 10.21.237.129\n!\nlogging console\nusername test password .....\nusername admin password .....\nradius-server host 10.21.240.42 auth-port 1812 acct-port 1813 default key 0 config123\n!\n!\nclock summer-time\nclock timezone us Pacific\ninterface ethernet 1/1/1\n dot1x port-control auto\n port-name to196PC\n disable\n!\n!\n!\n!\n!\n!\n!\n!\nalias cd=clear dot1x sessions\nalias sd=show dot1x sess all\n!\nlocal-userdb ssh\n username brocade password $e$)9-C*U%G'K5\n username admin password $e$)J5A,5b+\n username poc password $e$%Za7B%\n!\nend!\n", 'startup': "Startup-config data location is flash memory\n!\nStartup configuration:\n!\nver 08.0.40bbT211\n!\nstack unit 1\n  module 1 icx7450-48-port-management-module\n  module 2 icx7400-xgf-4port-40g-module\n  module 3 icx7400-qsfp-1port-40g-module\n  module 4 icx7400-qsfp-1port-40g-module\n!\n!\n!\n!\n!\nvlan 1 name DEFAULT-VLAN by port\n!\nvlan 4 by port\n untagged ethe 1/1/10\n!\nvlan 300 by port\n untagged ethe 1/1/13\n!\nvlan 2001 by port\n untagged ethe 1/1/11\n!\n!\n!\n!\nauthentication\n critical-vlan 2001\n auth-default-vlan 4\n restricted-vlan 300\n re-authentication\n reauth-period 120\n pass-through lldp\n dot1x enable\n dot1x enable ethe 1/1/1\n dot1x max-req 3\n dot1x timeout quiet-period 15\n dot1x timeout supplicant 2\n!\naaa authentication enable default local\naaa authentication dot1x default radius\naaa accounting dot1x default start-stop radius\nip address 10.21.237.131 255.255.255.128\nno ip dhcp-client enable\nip default-gateway 10.21.237.129\n!\nlogging console\nusername test password .....\nusername admin password .....\nradius-server host 10.21.240.42 auth-port 1812 acct-port 1813 default key 0 config123\n!\n!\nclock summer-time\nclock timezone us Pacific\ninterface ethernet 1/1/1\n dot1x port-control auto\n port-name to196PC\n disable\n!\n!\n!\n!\n!\n!\n!\n!\nalias cd=clear dot1x sessions\nalias sd=show dot1x sess all\n!\nlocal-userdb ssh\n username brocade password $e$)9-C*U%G'K5\n username admin password $e$)J5A,5b+\n username poc password $e$%Za7B%\n!\nend", 'candidate': ''}
+        test_get_config(self, self.device, exp_res)
+
 
 ### Device tests
 
 class TestGetterFastIronDriverDevice(unittest.TestCase):
     """Test Case for FastIronDriver using real device endpoint"""
+
+    unittest.TestCase.maxDiff = None
 
     def setUp(self):
         ipaddr = "10.21.237.131"
@@ -135,6 +151,13 @@ class TestGetterFastIronDriverDevice(unittest.TestCase):
         """Tests FastIronDriver.show_interfaces() on real device"""
         exp_res = {'oper': u'down', 'description': u'to196PC', 'admin': u'disabled', 'link_addr': u'609c.9f31.b160', 'speed': u'unknown', 'name': u'GigabitEthernet1/1/1'}
         test_show_interfaces(self, self.device, exp_res)
+
+    def test_get_config_device(self):
+        """Tests mocked expections of FastIronDriver.show_config()"""
+        exp_res = {'candidate': '',
+                   'running': u"Current configuration:\n!\nver 08.0.40bbT211\n!\nstack unit 1\n  module 1 icx7450-48-port-management-module\n  module 2 icx7400-xgf-4port-40g-module\n  module 3 icx7400-qsfp-1port-40g-module\n  module 4 icx7400-qsfp-1port-40g-module\n!\n!\n!\n!\n!\nvlan 1 name DEFAULT-VLAN by port\n!\nvlan 4 by port\n untagged ethe 1/1/10 \n!\nvlan 300 by port\n untagged ethe 1/1/13 \n!\nvlan 2001 by port\n untagged ethe 1/1/11 \n!\n!\n!\n!\nauthentication\n critical-vlan 2001\n auth-default-vlan 4\n restricted-vlan 300\n re-authentication\n reauth-period 120\n pass-through lldp\n dot1x enable\n dot1x enable ethe 1/1/1 \n dot1x max-req 3\n dot1x timeout quiet-period 15\n dot1x timeout supplicant 2\n!\naaa authentication enable default local\naaa authentication dot1x default radius\naaa authentication login default local\naaa accounting dot1x default start-stop radius\nip address 10.21.237.131 255.255.255.128\nno ip dhcp-client enable\nip default-gateway 10.21.237.129\n!\nlogging console\nusername test password .....\nusername admin password .....\nradius-server host 10.21.240.42 auth-port 1812 acct-port 1813 default key 0 config123\n!\n!\nclock summer-time\nclock timezone us Pacific\ninterface ethernet 1/1/1\n dot1x port-control auto\n port-name to196PC\n disable\n!\n!\n!\n!\n!\n!\n!\n!\nalias cd=clear dot1x sessions \nalias sd=show dot1x sess all\n!\nlocal-userdb ssh\n username brocade password $e$)9-C*U%G'K5\n username admin password $e$)J5A,5b+\n username poc password $e$%Za7B%\n!\nend!\n",
+                   'startup': u"Startup-config data location is flash memory\n!\nStartup configuration:\n!\nver 08.0.40bbT211\n!\nstack unit 1\n  module 1 icx7450-48-port-management-module\n  module 2 icx7400-xgf-4port-40g-module\n  module 3 icx7400-qsfp-1port-40g-module\n  module 4 icx7400-qsfp-1port-40g-module\n!\n!\n!\n!\n!\nvlan 1 name DEFAULT-VLAN by port\n!\nvlan 4 by port\n untagged ethe 1/1/10 \n!\nvlan 300 by port\n untagged ethe 1/1/13 \n!\nvlan 2001 by port\n untagged ethe 1/1/11 \n!\n!\n!\n!\nauthentication\n critical-vlan 2001\n auth-default-vlan 4\n restricted-vlan 300\n re-authentication\n reauth-period 120\n pass-through lldp\n dot1x enable\n dot1x enable ethe 1/1/1 \n dot1x max-req 3\n dot1x timeout quiet-period 15\n dot1x timeout supplicant 2\n!\naaa authentication enable default local\naaa authentication dot1x default radius\naaa accounting dot1x default start-stop radius\nip address 10.21.237.131 255.255.255.128\nno ip dhcp-client enable\nip default-gateway 10.21.237.129\n!\nlogging console\nusername test password .....\nusername admin password .....\nradius-server host 10.21.240.42 auth-port 1812 acct-port 1813 default key 0 config123\n!\n!\nclock summer-time\nclock timezone us Pacific\ninterface ethernet 1/1/1\n dot1x port-control auto\n port-name to196PC\n disable\n!\n!\n!\n!\n!\n!\n!\n!\nalias cd=clear dot1x sessions \nalias sd=show dot1x sess all\n!\nlocal-userdb ssh\n username brocade password $e$)9-C*U%G'K5\n username admin password $e$)J5A,5b+\n username poc password $e$%Za7B%\n!\nend"}
+        test_get_config(self, self.device, exp_res)
 
 
 # Make suites available
