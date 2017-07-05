@@ -8,6 +8,6 @@ Value Second (\d+)
 
 Start
   ^\s+SW: Version ${OSVersion}
-  ^\s+HW: Stackable $Model
+  ^\s+HW: Stackable ${Model}
   ^\s+Serial  #:${Serial_Number}
   ^STACKID 1  system uptime is ${Day} day\(s\) ${Hour} hour\(s\) ${Minute} minute\(s\) ${Second} second\(s\)

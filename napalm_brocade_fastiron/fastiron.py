@@ -27,7 +27,7 @@ from napalm_base.exceptions import (
     CommandErrorException,
     )
 
-from utils.utils import read_txt_file
+from utils.utils import read_txt_file, convert_uptime
 
 from netmiko import ConnectHandler
 import textfsm
@@ -82,15 +82,31 @@ class FastIronDriver(NetworkDriver):
         output = self.send_command(['show version'])
         tplt = read_txt_file("napalm_brocade_fastiron/utils/textfsm_templates/fastiron_show_version.template")
         t = textfsm.TextFSM(tplt)
-        result = t.ParseText(output)
+        result = t.ParseText(output).pop()
+        result = {"version": result[0],
+                  "model": result[1],
+                  "serial_no": result[2],
+                  "uptime": convert_uptime(result[3], result[4], result[5], result[6])}
         return result
 
     def show_interfaces(self):
+        interfaces = []
         output = self.send_command(['show interfaces'])
         tplt = read_txt_file("napalm_brocade_fastiron/utils/textfsm_templates/fastiron_show_interfaces.template")
         t = textfsm.TextFSM(tplt)
         result = t.ParseText(output)
-        return result
+        if result is not None:
+            for i in result:
+                entry = {"name" : i[0],
+                         "admin" : i[1],
+                         "oper" : i[2],
+                         "link_addr" : i[3],
+                         "speed" : i[4],
+                         "description" : i[5],
+                         "uptime": convert_uptime(i[6], i[7], i[8], i[9])
+                         }
+                interfaces.append(entry)
+        return interfaces
 
 
     def get_facts(self):

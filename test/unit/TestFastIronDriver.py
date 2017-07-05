@@ -1,22 +1,33 @@
+# Copyright 2017 Brocade Communications. All rights reserved.
+#
+# The contents of this file are licensed under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with the
+# License. You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations under
+# the License.
+
 """
 Tests for FastIronDriver that can test both against a mocked and real device.
 """
 
-#import os
 import re
 import unittest
 
 import mock
-#import textfsm
 #from napalm_base.exceptions import (CommandErrorException, ConnectionException,
 #                                    MergeConfigException,
 #                                    ReplaceConfigException,
 #                                    SessionLockedException)
-#from netmiko import (NetMikoAuthenticationException, NetMikoTimeoutException,
-#                     py23_compat)
+
+from netmiko import NetMikoTimeoutException
 
 import napalm_brocade_fastiron.fastiron
-#from napalm_brocade_fastiron.utils import parsers as p
 from napalm_brocade_fastiron.utils.utils import read_txt_file
 
 
@@ -27,12 +38,9 @@ def send_command(command):
     try:
         if isinstance(command, list):
             for cmd in command:
-                # output = self.session.send_command(cmd)
                 cmd = re.sub(r'[\[\]\*\^\+\s\|]', '_', cmd)
                 output = read_txt_file("test/unit/fastiron/mock_data/{}.txt".format(cmd)).read()
                 return output
-                # return py23_compat.text_type(output)
-
         else:
             cmd = re.sub(r'[\[\]\*\^\+\s\|]', '_', command)
             output = read_txt_file("test/unit/fastiron/mock_data/{}.txt".format(cmd)).read()
@@ -41,17 +49,19 @@ def send_command(command):
         raise
 
 
-### Test Functions: fn's to be shared between test frameworks ###
+# ### Test Functions: fn's to be shared between test frameworks ###
 
-def test_show_verion(test_obj, device, exp_result):
+def test_show_version(test_obj, device, exp_result):
     """Tests expections FastIronDriver.show_version()"""
     result = device.show_version()
+    result.pop('uptime', None)
     test_obj.assertEqual(result, exp_result)
 
 def test_show_interfaces(test_obj, device, exp_result):
     """Tests mocked expections of FastIronDriver.show_interfaces()"""
-    result = device.show_interfaces()
-    test_obj.assertEqual(result[0], exp_result)
+    result = device.show_interfaces()[0]
+    result.pop('uptime', None)
+    test_obj.assertEqual(result, exp_result)
 
 
 ### Mock Tests ###
@@ -65,10 +75,15 @@ class TestGetterFastIronDriverMock(unittest.TestCase):
         ipaddr = "10.21.237.131"
         user = "test"
         password = "test"
-        #secret = "test"
 
         self.vendor = 'brocade_fastiron'
-        self.device = napalm_brocade_fastiron.fastiron.FastIronDriver(ipaddr, user, password)
+        try:
+            self.device = napalm_brocade_fastiron.fastiron.FastIronDriver(ipaddr, user, password)
+        except NetMikoTimeoutException:
+             self.fail('Network Timeout Error:')
+        except:
+            raise 
+
 
         patch_target = 'napalm_brocade_fastiron.fastiron.FastIronDriver.send_command'
         self.send_command_patcher = mock.patch(patch_target,
@@ -82,13 +97,12 @@ class TestGetterFastIronDriverMock(unittest.TestCase):
 
     def test_show_version_mock(self):
         """Tests mocked expections of FastIronDriver.show_version()"""
-        exp_res = [['08.0.40bbT211', 'ICX7450-48', 'CYX3318M0Y1', '6', '16', '35', '37']]
-        test_show_verion(self, self.device, exp_res)
+        exp_res =  {'model': 'ICX7450-48', 'version': '08.0.40bbT211', 'serial_no': 'CYX3318M0Y1'}
+        test_show_version(self, self.device, exp_res)
 
     def test_show_interfaces_mock(self):
         """Tests mocked expections of FastIronDriver.show_interfaces()"""
-        exp_res = ['GigabitEthernet1/1/1', 'disabled', 'down', '5', '17', '53',
-                   '9', '609c.9f31.b160', 'unknown', 'to196PC']
+        exp_res = {'oper': 'down', 'description': 'to196PC', 'admin': 'disabled', 'link_addr': '609c.9f31.b160', 'speed': 'unknown', 'name': 'GigabitEthernet1/1/1'}
         test_show_interfaces(self, self.device, exp_res)
 
 
@@ -100,24 +114,26 @@ class TestGetterFastIronDriverDevice(unittest.TestCase):
     def setUp(self):
         ipaddr = "10.21.237.131"
         user = "test"
-
         password = "test"
-        #secret = "test"
 
         self.vendor = 'brocade_fastiron'
         self.device = napalm_brocade_fastiron.fastiron.FastIronDriver(ipaddr, user, password)
-        self.device.open()
+        
+        try:
+            self.device.open()
+        except NetMikoTimeoutException:
+             self.fail('Network Timeout Error:')
+        except:
+             raise
 
     def test_show_version_device(self):
         """Tests FastIronDriver.show_version() on real device"""
-        # TODO Fix this because the uptime results are dynamic.
-        exp_res = [[u'08.0.40bbT211', u'ICX7450-48', u'CYX3318M0Y1', u'6', u'16', u'38', u'2']]
-        test_show_verion(self, self.device, exp_res)
-    # TODO FIX THIS
-
+        exp_res = {'model': u'ICX7450-48', 'version': u'08.0.40bbT211', 'serial_no': u'CYX3318M0Y1'}
+        test_show_version(self, self.device, exp_res)
+    
     def test_show_interfaces_device(self):
         """Tests FastIronDriver.show_interfaces() on real device"""
-        exp_res = ""
+        exp_res = {'oper': u'down', 'description': u'to196PC', 'admin': u'disabled', 'link_addr': u'609c.9f31.b160', 'speed': u'unknown', 'name': u'GigabitEthernet1/1/1'}
         test_show_interfaces(self, self.device, exp_res)
 
 

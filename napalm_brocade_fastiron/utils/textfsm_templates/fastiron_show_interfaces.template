@@ -1,13 +1,13 @@
 Value Interface (\S+)
 Value Admin (\S+)
 Value Oper (\S+)
+Value LinkLocal (\S+)
+Value Speed (\S+)
+Value Description (.*)
 Value Day (\d+)
 Value Hour (\S+)
 Value Minute (\d+)
 Value Second (\d+)
-Value LinkLocal (\S+)
-Value Speed (\S+)
-Value Description (.*)
 
 
 Start
