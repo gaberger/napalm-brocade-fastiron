@@ -1,0 +1,3 @@
+!
+Startup-config data location is flash memory
+!

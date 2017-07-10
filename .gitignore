@@ -63,3 +63,4 @@ target/
 
 
 .vscode
+.virtualenv

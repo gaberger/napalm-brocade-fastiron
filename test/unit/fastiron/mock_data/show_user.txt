@@ -1,0 +1,4 @@
+Username                                        Password                           Encrypt   Priv Status   Expire Time
+======================================================================================================================
+test                                            $1$EpW/w1zf$GRK8IpH0dw4p6zeR7NyWK0 enabled   0    enabled  Never
+admin                                           $1$Q5T6rxIN$QBk8z4dt9EPYDXZZTw3i5/ enabled   0    enabled  Never

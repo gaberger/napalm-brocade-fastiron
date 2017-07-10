@@ -1,0 +1,7 @@
+All ARPs: 1, maximum capacity: 4096
+No.   IP              MAC            Type     Age Port           Status VLAN
+1     10.21.237.129   748e.f8d5.3d80 Dynamic  0   mgmt1          Valid  4091
+2     10.21.237.128   748e.f8d5.3d81 Dynamic  0   mgmt1          Valid  4091
+3     10.21.237.127   748e.f8d5.3d82 Dynamic  0   mgmt1          Valid  4091
+4     10.21.237.126   748e.f8d5.3d83 Dynamic  0   mgmt1          Valid  4091
+Total ARP Entries : 4

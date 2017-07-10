@@ -1,0 +1,31 @@
+  Copyright (c) 1996-2015 Brocade Communications Systems, Inc. All rights reserved.
+    UNIT 1: compiled on Mar 14 2017 at 05:30:41 labeled as SPS08040bb
+      (21198276 bytes) from Primary SPS08040bb.bin
+        SW: Version 08.0.40bbT211
+      Compressed Boot-Monitor Image size = 786944, Version:10.1.06T215 (spz10106)
+       Compiled on Mon Dec 14 13:11:21 2015
+
+  HW: Stackable ICX7450-48
+  Internal USB: Serial #: 9900516040100241
+      Vendor: ATP Electronics, Total size = 1919 MB
+==========================================================================
+UNIT 1: SL 1: ICX7450-48 48-port Management Module
+      Serial  #:CYQ3319M00M
+      License: BASE_SOFT_PACKAGE   (LID: easIIGOoFFo)
+      P-ASIC  0: type B548, rev 01  Chip BCM56548_A0
+==========================================================================
+UNIT 1: SL 2: ICX7400-4X10GF 4-port 40G Module
+      Serial  #:CYV3318M0N1
+==========================================================================
+UNIT 1: SL 3: ICX7400-1X40GQ 1-port 40G Module
+      Serial  #:CYX3318M1JC
+==========================================================================
+UNIT 1: SL 4: ICX7400-1X40GQ 1-port 40G Module
+      Serial  #:CYX3318M0Y1
+==========================================================================
+ 1000 MHz ARM processor ARMv7 88 MHz bus
+ 8192 KB boot flash memory
+ 2048 MB code flash memory
+ 2048 MB DRAM
+STACKID 1  system uptime is 6 day(s) 16 hour(s) 35 minute(s) 37 second(s)
+The system : started=warm start   reloaded=by "reload"

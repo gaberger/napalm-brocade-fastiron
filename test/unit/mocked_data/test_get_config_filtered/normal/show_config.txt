@@ -44,14 +44,15 @@ authentication
 !
 aaa authentication enable default local
 aaa authentication dot1x default radius
+aaa authentication login default local
 aaa accounting dot1x default start-stop radius
 ip address 10.21.237.131 255.255.255.128
 no ip dhcp-client enable
 ip default-gateway 10.21.237.129
 !
 logging console
-username test password test
-username admin password admin
+username test password .....
+username admin password .....
 radius-server host 10.21.240.42 auth-port 1812 acct-port 1813 default key 0 config123
 !
 !

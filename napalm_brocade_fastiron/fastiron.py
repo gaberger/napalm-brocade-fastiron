@@ -27,12 +27,14 @@ from napalm_base.exceptions import (
     CommandErrorException,
     )
 
-from utils.utils import read_txt_file, convert_uptime
-
+from utils.utils import read_txt_file, convert_uptime, convert_speed
+from utils.parsers import parse_get_facts
 from netmiko import ConnectHandler
+
 import textfsm
 import socket
 import StringIO
+import json
 
 class FastIronDriver(NetworkDriver):
     """Napalm driver for FastIron."""
@@ -48,21 +50,20 @@ class FastIronDriver(NetworkDriver):
 
     def open(self):
         """Implementation of NAPALM method open."""
-        self.driver = ConnectHandler(device_type = 'brocade_fastiron',
+        self.device = ConnectHandler(device_type = 'brocade_fastiron',
                                       ip =   self.hostname,
                                       username =  self.username,
                                       password = self.password,
-                                      secret = "test",    
-                                      verbose = True,
+                                      verbose = False,
                                       use_keys = False,
                                       session_timeout = 300)
-        self.driver.session_preparation()
+        self.device.session_preparation()
         
     def close(self):
         """Implementation of NAPALM method close."""
-        self.session.disconnect()
+        self.device.disconnect()
 
-    def send_command(self, command):
+    def _send_command(self, command):
         """Wrapper for self.device.send.command().
         If command is a list will iterate through commands until valid command.
         """
@@ -70,18 +71,18 @@ class FastIronDriver(NetworkDriver):
             if isinstance(command, list):
                 output = ""
                 for cmd in command:
-                    output = output + self.driver.send_command(cmd)
+                    output = output + self.device.send_command(cmd)
                     # TODO Check exception handling
                     # if "% Invalid" not in output:
                         # break
             else:
-                output = self.driver.send_command(command)
+                output = self.device.send_command(command)
             return output
         except (socket.error, EOFError) as e:
             raise ConnectionClosedException(str(e))
 
-    def show_version(self):
-        output = self.send_command(['show version'])
+    def _show_version(self):
+        output = self._send_command(['show version'])
         tplt = read_txt_file("napalm_brocade_fastiron/utils/textfsm_templates/fastiron_show_version.template")
         t = textfsm.TextFSM(tplt)
         result = t.ParseText(output).pop()
@@ -91,81 +92,162 @@ class FastIronDriver(NetworkDriver):
                   "uptime": convert_uptime(result[3], result[4], result[5], result[6])}
         return result
 
-    def show_interfaces(self):
-        interfaces = []
-        output = self.send_command(['show interfaces'])
+
+
+    # Napalm API
+
+
+    def get_interfaces(self):
+        """Returns a dictionary of dictionaries. The keys for the first dictionary will be the interfaces in the devices. """
+        interfaces = {}
+        output = self._send_command(['show interfaces'])
         tplt = read_txt_file("napalm_brocade_fastiron/utils/textfsm_templates/fastiron_show_interfaces.template")
         t = textfsm.TextFSM(tplt)
         result = t.ParseText(output)
         if result is not None:
             for i in result:
-                entry = {"name" : i[0],
-                         "admin" : i[1],
-                         "oper" : i[2],
-                         "link_addr" : i[3],
-                         "speed" : i[4],
-                         "description" : i[5],
-                         "uptime": convert_uptime(i[6], i[7], i[8], i[9])
-                         }
-                interfaces.append(entry)
+                entry = {
+                    i[0] : {
+                        "is_enabled" :  True if i[1] == 'enabled' else False,
+                        "is_up" : True if i[2] == 'up' else False,
+                        "mac_address" : i[3],
+                        "speed" : 0 if i[4] == 'unknown' else convert_speed(i[4]),
+                        "description" : unicode(i[5]),
+                        "last_flapped": convert_uptime(i[6], i[7], i[8], i[9]) # TODO Check
+                        }
+                }
+                interfaces.update(entry)
         return interfaces
 
+    def get_arp_table(self):
+        table = []
+        output = self._send_command(['show arp'])
+        tplt = read_txt_file("napalm_brocade_fastiron/utils/textfsm_templates/fastiron_show_arp.template")
+        t = textfsm.TextFSM(tplt)
+        result = t.ParseText(output)
+        if result is not None:
+            for i in result:
+                entry = {
+                    "interface" : i[2],
+                    "mac": i[1],
+                    "ip": i[0],
+                    "age": float(i[3])
+                }
+                table.append(entry)
+        return table
 
-    # Napalm API
+
 
     def get_config(self, retrieve='all'):
-        test = self.send_command(['show running-config', 'show config'])
+        configs = { 
+                 'startup': "",
+                 'running': "",
+                 'candidate': ""}
 
-        running_config_buffer = StringIO.StringIO()
-        startup_config_buffer = StringIO.StringIO()
+        def parse_stream(stream, config):
+           
 
-        stringbuffer = StringIO.StringIO(test)
-        startup = False
+            running_config_buffer = StringIO.StringIO()
+            startup_config_buffer = StringIO.StringIO()
 
-        for line in stringbuffer.readlines():
-            if 'Startup-config' in line:
-                if not startup:        
-                    startup = True
-            if startup:
-                startup_config_buffer.write(line)
-            else:
-                running_config_buffer.write(line)
+            stringbuffer = StringIO.StringIO(stream)
+            startup = False
 
-        running_config = running_config_buffer.getvalue()
-        startup_config = startup_config_buffer.getvalue()
+            for line in stringbuffer.readlines():
+                # TODO what order do the commands have to be in?
+                if 'Startup-config' in line:
+                    if not startup:        
+                        startup = True
+                if startup:
+                    startup_config_buffer.write(line)
+                else:
+                    running_config_buffer.write(line)
 
-        running_config_buffer.close()
-        startup_config_buffer.close()
+            config['running'] = unicode(running_config_buffer.getvalue())
+            config['startup'] = unicode(startup_config_buffer.getvalue())
+            config['candidate'] = unicode("")
 
-        config = {"running" : running_config,
-                    "candidate": "",
-                    "startup": startup_config}
+            running_config_buffer.close()
+            startup_config_buffer.close()
+            
+            return config
 
-        return config
+        if retrieve == 'all':
+            command = ['show running-config', 'show config']
+            output = self._send_command(command)
+            configs = parse_stream(output, configs)
 
+        if retrieve == 'startup':
+            command = 'show config'
+            output = self._send_command(command)
+            configs['startup'] = unicode(output)
+            
+
+        if retrieve == 'running':
+            command = 'show running-config'
+            output = self._send_command(command)
+            configs['running'] = unicode(output)
+            
+
+        return configs
+
+
+    # TODO Handle Exception
+    def commit_config(self):
+        output = self._send_command(['write memory'])
+        if not "Copy Done." in output:
+            raise ValueError
+
+    def _load_config(source_file, source_config):
+        pass
+
+    def load_replace_candidate(self, filename=None, config=None):
+        """
+        FastIron writes to the running configuration but is not commited until write mem
+        """
+        self.config_replace = True
+        return_status, msg = self._load_config(source_file=filename, source_config=config)
+        if not return_status:
+            raise ReplaceConfigException(msg)
+
+    # TODO finish interface list
     def get_facts(self):
-            commands = []
-            commands.append('show version')
+        try:
+            result = self._send_command(['show version'])
+            interfaces = self.get_interfaces()
+            facts = parse_get_facts(result)
+        except:
+            raise
 
-            try:
-                result = self.send_command(commands)
-                print(result)
-                facts = p.parse_get_facts(result)
-            except:
-                raise
+        facts = {
+                'hostname': "-".join((facts['model'], facts['os_version'])),
+                'fqdn': "-".join((facts['model'], facts['os_version'])),
+                'vendor': u'Brocade',
+                'model': facts['model'],
+                'serial_number': facts['serial_no'],
+                'os_version': facts['os_version'],
+                'uptime': facts['uptime'],
+                'interface_list': interfaces.keys(),
+            }
 
+        return facts
+
+    def is_alive(self):
+        """Returns a flag with the state of the connection."""
+        null = chr(0)
+        try:
+            # Try sending ASCII null byte to maintain
+            #   the connection alive
+            self.device.send_command(null)
+        except (socket.error, EOFError):
+            # If unable to send, we can tell for sure
+            #   that the connection is unusable,
+            #   hence return False.
             return {
-                    'hostname': "-".join((facts['model'], facts['os_version'])),
-                    'fqdn': "-".join((facts['model'], facts['os_version'])),
-                    'vendor': u'Brocade',
-                    'model': facts['model'],
-                    'serial_number': facts['serial_no'],
-                    'os_version': facts['os_version'],
-                    'uptime': facts['uptime'],
-                    # 'interface_list': interfaces,
-                }
-
-            return sv
-
+                'is_alive': False
+            }
+        return {
+            'is_alive': self.device.remote_conn.transport.is_active()
+        }
 
     

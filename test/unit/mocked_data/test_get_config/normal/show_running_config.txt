@@ -1,0 +1,4 @@
+Current configuration:
+!
+ver 08.0.40bbT211
+!
