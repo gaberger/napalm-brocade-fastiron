@@ -198,15 +198,25 @@ class FastIronDriver(NetworkDriver):
         if not "Copy Done." in output:
             raise ValueError
 
-    def _load_config(source_file, source_config):
-        pass
+    def _load_config(self, filename=None, config=None):
+        return (True, "bar")
 
     def load_replace_candidate(self, filename=None, config=None):
         """
         FastIron writes to the running configuration but is not commited until write mem
         """
+
+        if filename and config:
+            raise ValueError("Cannot simultaneously set source_file and source_config")
+
         self.config_replace = True
-        return_status, msg = self._load_config(source_file=filename, source_config=config)
+
+        if config:
+            (return_status, msg) = self._load_config(config=config)
+        elif filename:
+            print("DEBUG: Source File {}".format(filename))
+            (return_status, msg) = self._load_config(filename=filename)
+            
         if not return_status:
             raise ReplaceConfigException(msg)
 
