@@ -79,7 +79,7 @@ class FastIronDriver(NetworkDriver):
                 output = self.device.send_command(command)
             return output
         except (socket.error, EOFError) as e:
-            raise ConnectionClosedException(str(e))
+            raise ConnectionException(str(e))
 
     def _show_version(self):
         output = self._send_command(['show version'])
