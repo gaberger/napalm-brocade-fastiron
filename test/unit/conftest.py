@@ -1,5 +1,5 @@
 """Test fixtures."""
-from builtins import *
+from builtins import super
 
 import pytest
 from napalm_base.test import conftest as parent_conftest
@@ -27,7 +27,6 @@ def pytest_generate_tests(metafunc):
     """Generate test cases dynamically."""
     parent_conftest.pytest_generate_tests(metafunc, __file__)
 
-
 class PatchedFastIronDriver(fastiron.FastIronDriver):
     """Patched FastIron Driver."""
 
@@ -45,8 +44,6 @@ class PatchedFastIronDriver(fastiron.FastIronDriver):
         return {
             'is_alive': True  # In testing everything works..
         }
-
-
 
 class FakeFastIronDriver(BaseTestDouble):
     """Skeleton device test double."""

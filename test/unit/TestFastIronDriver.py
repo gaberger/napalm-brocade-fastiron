@@ -15,15 +15,16 @@
 """Tests."""
 
 import unittest
+import pytest
 import re
 
 from napalm_brocade_fastiron import fastiron
-from napalm_base.test.base import TestGettersNetworkDriver, TestConfigNetworkDriver
+from napalm_base.test.base import TestConfigNetworkDriver
 import json
 
 from napalm_base.utils import py23_compat
 
-
+@pytest.mark.usefixtures("setUpClass")
 class TestConfigDriver(unittest.TestCase, TestConfigNetworkDriver):
     """Group of tests that test Configuration related methods."""
 
@@ -48,29 +49,29 @@ class TestConfigDriver(unittest.TestCase, TestConfigNetworkDriver):
         cls.device.load_replace_candidate(filename='%s/initial.conf' % cls.vendor)
         cls.device.commit_config()
 
-
-class TestGetterDriver(unittest.TestCase, TestGettersNetworkDriver):
-    """Group of tests that test getters."""
-
-    @classmethod
-    def setUpClass(cls):
-        """Run before starting the tests."""
-        cls.mock = True
-
-        hostname = '127.0.0.1'
-        username = 'vagrant'
-        password = 'vagrant'
-        cls.vendor = 'fastiron'
-
-        optional_args = {'port': 12443, }
-        cls.device = fastiron.FastIronDriver(hostname, username, password, timeout=60,
-                                             optional_args=optional_args)
-
-        if cls.mock:
-            # cls.device.device = FakeDevice()
-            cls.device = FakeDevice()
-        else:
-            cls.device.open()
+#
+# class TestGetterDriver(unittest.TestCase, TestGettersNetworkDriver):
+#     """Group of tests that test getters."""
+#
+#     @classmethod
+#     def setUpClass(cls):
+#         """Run before starting the tests."""
+#         cls.mock = True
+#
+#         hostname = '127.0.0.1'
+#         username = 'vagrant'
+#         password = 'vagrant'
+#         cls.vendor = 'fastiron'
+#
+#         optional_args = {'port': 12443, }
+#         cls.device = fastiron.FastIronDriver(hostname, username, password, timeout=60,
+#                                              optional_args=optional_args)
+#
+#         if cls.mock:
+#             # cls.device.device = FakeDevice()
+#             cls.device = FakeDevice()
+#         else:
+#             cls.device.open()
 
 
 class FakeDevice:

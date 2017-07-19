@@ -27,12 +27,5 @@ setup(
     ],
     url="https://github.com/gaberger/test",
     include_package_data=True,
-    install_requires=reqs,
-    extras_require={
-        'develop': [
-            'nose==1.3.7',
-            'pylint==1.7.2',
-            'mock==2.0.0'
-        ],
-    }
+    install_requires=reqs
 )

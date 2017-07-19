@@ -21,10 +21,7 @@ Read https://napalm.readthedocs.io for more information.
 from napalm_base.base import NetworkDriver
 from napalm_base.exceptions import (
     ConnectionException,
-    SessionLockedException,
-    MergeConfigException,
     ReplaceConfigException,
-    CommandErrorException,
     )
 
 from utils.utils import read_txt_file, convert_uptime, convert_speed
@@ -34,7 +31,7 @@ from netmiko import ConnectHandler
 import textfsm
 import socket
 import StringIO
-import json
+
 
 class FastIronDriver(NetworkDriver):
     """Napalm driver for FastIron."""
@@ -43,22 +40,24 @@ class FastIronDriver(NetworkDriver):
         self.hostname = hostname
         self.username = username
         self.password = password
-        self.timeout = timeout        
+        self.timeout = timeout
+        self.config_replace = True
+        self.device = None
 
         if optional_args is None:
             optional_args = {}
 
     def open(self):
         """Implementation of NAPALM method open."""
-        self.device = ConnectHandler(device_type = 'brocade_fastiron',
-                                      ip =   self.hostname,
-                                      username =  self.username,
-                                      password = self.password,
-                                      verbose = False,
-                                      use_keys = False,
-                                      session_timeout = 300)
+        self.device = ConnectHandler(device_type='brocade_fastiron',
+                                     ip=self.hostname,
+                                     username=self.username,
+                                     password=self.password,
+                                     verbose=False,
+                                     use_keys=False,
+                                     session_timeout=300)
         self.device.session_preparation()
-        
+
     def close(self):
         """Implementation of NAPALM method close."""
         self.device.disconnect()
@@ -74,7 +73,7 @@ class FastIronDriver(NetworkDriver):
                     output = output + self.device.send_command(cmd)
                     # TODO Check exception handling
                     # if "% Invalid" not in output:
-                        # break
+                    #     break
             else:
                 output = self.device.send_command(command)
             return output
@@ -92,13 +91,11 @@ class FastIronDriver(NetworkDriver):
                   "uptime": convert_uptime(result[3], result[4], result[5], result[6])}
         return result
 
-
-
     # Napalm API
 
-
     def get_interfaces(self):
-        """Returns a dictionary of dictionaries. The keys for the first dictionary will be the interfaces in the devices. """
+        """Returns a dictionary of dictionaries.
+        The keys for the first dictionary will be the interfaces in the devices. """
         interfaces = {}
         output = self._send_command(['show interfaces'])
         tplt = read_txt_file("napalm_brocade_fastiron/utils/textfsm_templates/fastiron_show_interfaces.template")
@@ -108,11 +105,11 @@ class FastIronDriver(NetworkDriver):
             for i in result:
                 entry = {
                     i[0] : {
-                        "is_enabled" :  True if i[1] == 'enabled' else False,
-                        "is_up" : True if i[2] == 'up' else False,
-                        "mac_address" : i[3],
-                        "speed" : 0 if i[4] == 'unknown' else convert_speed(i[4]),
-                        "description" : unicode(i[5]),
+                        "is_enabled":  True if i[1] == 'enabled' else False,
+                        "is_up": True if i[2] == 'up' else False,
+                        "mac_address": i[3],
+                        "speed": 0 if i[4] == 'unknown' else convert_speed(i[4]),
+                        "description": unicode(i[5]),
                         "last_flapped": convert_uptime(i[6], i[7], i[8], i[9]) # TODO Check
                         }
                 }
@@ -136,8 +133,6 @@ class FastIronDriver(NetworkDriver):
                 table.append(entry)
         return table
 
-
-
     def get_config(self, retrieve='all'):
         configs = { 
                  'startup': "",
@@ -145,7 +140,6 @@ class FastIronDriver(NetworkDriver):
                  'candidate': ""}
 
         def parse_stream(stream, config):
-           
 
             running_config_buffer = StringIO.StringIO()
             startup_config_buffer = StringIO.StringIO()
@@ -182,15 +176,12 @@ class FastIronDriver(NetworkDriver):
             output = self._send_command(command)
             configs['startup'] = unicode(output)
             
-
         if retrieve == 'running':
             command = 'show running-config'
             output = self._send_command(command)
             configs['running'] = unicode(output)
             
-
         return configs
-
 
     # TODO Handle Exception
     def commit_config(self):
@@ -199,17 +190,17 @@ class FastIronDriver(NetworkDriver):
             raise ValueError
 
     def _load_config(self, filename=None, config=None):
-        return (True, "bar")
+        return True, "bar"
 
     def load_replace_candidate(self, filename=None, config=None):
         """
         FastIron writes to the running configuration but is not commited until write mem
         """
+        return_status = None
+        msg = ""
 
         if filename and config:
             raise ValueError("Cannot simultaneously set source_file and source_config")
-
-        self.config_replace = True
 
         if config:
             (return_status, msg) = self._load_config(config=config)
@@ -260,4 +251,3 @@ class FastIronDriver(NetworkDriver):
             'is_alive': self.device.remote_conn.transport.is_active()
         }
 
-    
