@@ -1,442 +1,442 @@
 {
-    "40GigabitEthernet1/3/1": {
-        "is_enabled": false,
-        "description": "",
-        "last_flapped": 496347,
-        "is_up": true,
-        "mac_address": "609c.9f31.b195",
-        "speed": 40000
-    },
-    "GigabitEthernet1/1/18": {
-        "is_enabled": false,
-        "description": "",
-        "last_flapped": 496349,
-        "is_up": false,
-        "mac_address": "609c.9f31.b171",
-        "speed": 0
-    },
-    "GigabitEthernet1/1/48": {
-        "is_enabled": false,
-        "description": "",
-        "last_flapped": 496349,
-        "is_up": false,
-        "mac_address": "609c.9f31.b18f",
-        "speed": 0
-    },
-    "GigabitEthernet1/1/45": {
-        "is_enabled": false,
-        "description": "",
-        "last_flapped": 496349,
-        "is_up": false,
-        "mac_address": "609c.9f31.b18c",
-        "speed": 0
-    },
-    "GigabitEthernet1/1/44": {
-        "is_enabled": false,
-        "description": "",
-        "last_flapped": 496349,
-        "is_up": false,
-        "mac_address": "609c.9f31.b18b",
-        "speed": 0
-    },
-    "GigabitEthernet1/1/47": {
-        "is_enabled": false,
-        "description": "",
-        "last_flapped": 496349,
-        "is_up": false,
-        "mac_address": "609c.9f31.b18e",
-        "speed": 0
-    },
-    "GigabitEthernet1/1/46": {
-        "is_enabled": false,
-        "description": "",
-        "last_flapped": 496349,
-        "is_up": false,
-        "mac_address": "609c.9f31.b18d",
-        "speed": 0
-    },
-    "GigabitEthernet1/1/41": {
-        "is_enabled": false,
-        "description": "",
-        "last_flapped": 496349,
-        "is_up": false,
-        "mac_address": "609c.9f31.b188",
-        "speed": 0
-    },
-    "GigabitEthernet1/1/40": {
-        "is_enabled": false,
-        "description": "",
-        "last_flapped": 496349,
-        "is_up": false,
-        "mac_address": "609c.9f31.b187",
-        "speed": 0
-    },
-    "GigabitEthernet1/1/43": {
-        "is_enabled": false,
-        "description": "",
-        "last_flapped": 496349,
-        "is_up": false,
-        "mac_address": "609c.9f31.b18a",
-        "speed": 0
-    },
-    "GigabitEthernet1/1/42": {
-        "is_enabled": false,
-        "description": "",
-        "last_flapped": 496349,
-        "is_up": false,
-        "mac_address": "609c.9f31.b189",
-        "speed": 0
-    },
-    "GigabitEthernet1/1/29": {
-        "is_enabled": false,
-        "description": "",
-        "last_flapped": 496349,
-        "is_up": false,
-        "mac_address": "609c.9f31.b17c",
-        "speed": 0
-    },
-    "GigabitEthernet1/1/28": {
-        "is_enabled": false,
-        "description": "",
-        "last_flapped": 496349,
-        "is_up": false,
-        "mac_address": "609c.9f31.b17b",
-        "speed": 0
-    },
-    "GigabitEthernet1/1/27": {
-        "is_enabled": false,
-        "description": "",
-        "last_flapped": 496349,
-        "is_up": false,
-        "mac_address": "609c.9f31.b17a",
-        "speed": 0
-    },
-    "GigabitEthernet1/1/26": {
-        "is_enabled": false,
-        "description": "",
-        "last_flapped": 496349,
-        "is_up": false,
-        "mac_address": "609c.9f31.b179",
-        "speed": 0
-    },
-    "GigabitEthernet1/1/25": {
-        "is_enabled": false,
-        "description": "",
-        "last_flapped": 496349,
-        "is_up": false,
-        "mac_address": "609c.9f31.b178",
-        "speed": 0
-    },
-    "GigabitEthernet1/1/24": {
-        "is_enabled": false,
-        "description": "",
-        "last_flapped": 496349,
-        "is_up": false,
-        "mac_address": "609c.9f31.b177",
-        "speed": 0
-    },
-    "GigabitEthernet1/1/23": {
-        "is_enabled": false,
-        "description": "",
-        "last_flapped": 496349,
-        "is_up": false,
-        "mac_address": "609c.9f31.b176",
-        "speed": 0
-    },
-    "GigabitEthernet1/1/22": {
-        "is_enabled": false,
-        "description": "",
-        "last_flapped": 496349,
-        "is_up": false,
-        "mac_address": "609c.9f31.b175",
-        "speed": 0
-    },
-    "GigabitEthernet1/1/21": {
-        "is_enabled": false,
-        "description": "",
-        "last_flapped": 496349,
-        "is_up": false,
-        "mac_address": "609c.9f31.b174",
-        "speed": 0
-    },
-    "GigabitEthernet1/1/20": {
-        "is_enabled": false,
-        "description": "",
-        "last_flapped": 496349,
-        "is_up": false,
-        "mac_address": "609c.9f31.b173",
-        "speed": 0
-    },
-    "GigabitEthernet1/1/8": {
-        "is_enabled": false,
-        "description": "",
-        "last_flapped": 496349,
-        "is_up": false,
-        "mac_address": "609c.9f31.b167",
-        "speed": 0
-    },
-    "GigabitEthernet1/1/9": {
-        "is_enabled": false,
-        "description": "",
-        "last_flapped": 496349,
-        "is_up": false,
-        "mac_address": "609c.9f31.b168",
-        "speed": 0
-    },
-    "GigabitEthernet1/1/33": {
-        "is_enabled": false,
-        "description": "",
-        "last_flapped": 496349,
-        "is_up": false,
-        "mac_address": "609c.9f31.b180",
-        "speed": 0
-    },
-    "GigabitEthernet1/1/1": {
-        "is_enabled": false,
-        "description": "to196PC",
-        "last_flapped": 496389,
-        "is_up": false,
-        "mac_address": "609c.9f31.b160",
-        "speed": 0
-    },
-    "GigabitEthernet1/1/2": {
-        "is_enabled": false,
-        "description": "",
-        "last_flapped": 496349,
-        "is_up": false,
-        "mac_address": "609c.9f31.b161",
-        "speed": 0
-    },
-    "GigabitEthernet1/1/3": {
-        "is_enabled": false,
-        "description": "",
-        "last_flapped": 496349,
-        "is_up": false,
-        "mac_address": "609c.9f31.b162",
-        "speed": 0
-    },
-    "GigabitEthernet1/1/4": {
-        "is_enabled": false,
-        "description": "",
-        "last_flapped": 496349,
-        "is_up": false,
-        "mac_address": "609c.9f31.b163",
-        "speed": 0
-    },
-    "GigabitEthernet1/1/5": {
-        "is_enabled": false,
-        "description": "",
-        "last_flapped": 496349,
-        "is_up": false,
-        "mac_address": "609c.9f31.b164",
-        "speed": 0
-    },
-    "GigabitEthernet1/1/6": {
-        "is_enabled": false,
-        "description": "",
-        "last_flapped": 496349,
-        "is_up": false,
-        "mac_address": "609c.9f31.b165",
-        "speed": 0
-    },
-    "GigabitEthernet1/1/7": {
-        "is_enabled": false,
-        "description": "",
-        "last_flapped": 496349,
-        "is_up": false,
-        "mac_address": "609c.9f31.b166",
-        "speed": 0
-    },
-    "GigEthernetmgmt1": {
-        "is_enabled": false,
-        "description": "",
-        "last_flapped": 496349,
-        "is_up": true,
-        "mac_address": "609c.9f31.b160",
-        "speed": 1000
-    },
-    "GigabitEthernet1/1/12": {
-        "is_enabled": false,
-        "description": "",
-        "last_flapped": 496349,
-        "is_up": false,
-        "mac_address": "609c.9f31.b16b",
-        "speed": 0
-    },
-    "GigabitEthernet1/1/13": {
-        "is_enabled": false,
-        "description": "",
-        "last_flapped": 496349,
-        "is_up": false,
-        "mac_address": "609c.9f31.b16c",
-        "speed": 0
-    },
-    "GigabitEthernet1/1/10": {
-        "is_enabled": false,
-        "description": "",
-        "last_flapped": 496349,
-        "is_up": false,
-        "mac_address": "609c.9f31.b169",
-        "speed": 0
-    },
-    "GigabitEthernet1/1/11": {
-        "is_enabled": false,
-        "description": "",
-        "last_flapped": 496349,
-        "is_up": false,
-        "mac_address": "609c.9f31.b16a",
-        "speed": 0
-    },
-    "GigabitEthernet1/1/16": {
-        "is_enabled": false,
-        "description": "",
-        "last_flapped": 496349,
-        "is_up": false,
-        "mac_address": "609c.9f31.b16f",
-        "speed": 0
-    },
-    "GigabitEthernet1/1/17": {
-        "is_enabled": false,
-        "description": "",
-        "last_flapped": 496349,
-        "is_up": false,
-        "mac_address": "609c.9f31.b170",
-        "speed": 0
-    },
-    "GigabitEthernet1/1/14": {
-        "is_enabled": false,
-        "description": "",
-        "last_flapped": 496349,
-        "is_up": false,
-        "mac_address": "609c.9f31.b16d",
-        "speed": 0
-    },
-    "GigabitEthernet1/1/15": {
-        "is_enabled": false,
-        "description": "",
-        "last_flapped": 496349,
-        "is_up": false,
-        "mac_address": "609c.9f31.b16e",
-        "speed": 0
-    },
-    "GigabitEthernet1/1/30": {
-        "is_enabled": false,
-        "description": "",
-        "last_flapped": 496349,
-        "is_up": false,
-        "mac_address": "609c.9f31.b17d",
-        "speed": 0
-    },
-    "GigabitEthernet1/1/31": {
-        "is_enabled": false,
-        "description": "",
-        "last_flapped": 496349,
-        "is_up": false,
-        "mac_address": "609c.9f31.b17e",
-        "speed": 0
-    },
-    "GigabitEthernet1/1/32": {
-        "is_enabled": false,
-        "description": "",
-        "last_flapped": 496349,
-        "is_up": false,
-        "mac_address": "609c.9f31.b17f",
-        "speed": 0
-    },
-    "GigabitEthernet1/1/19": {
-        "is_enabled": false,
-        "description": "",
-        "last_flapped": 496349,
-        "is_up": false,
-        "mac_address": "609c.9f31.b172",
-        "speed": 0
-    },
-    "GigabitEthernet1/1/34": {
-        "is_enabled": false,
-        "description": "",
-        "last_flapped": 496349,
-        "is_up": false,
-        "mac_address": "609c.9f31.b181",
-        "speed": 0
-    },
-    "GigabitEthernet1/1/35": {
-        "is_enabled": false,
-        "description": "",
-        "last_flapped": 496349,
-        "is_up": false,
-        "mac_address": "609c.9f31.b182",
-        "speed": 0
-    },
-    "GigabitEthernet1/1/36": {
-        "is_enabled": false,
-        "description": "",
-        "last_flapped": 496349,
-        "is_up": false,
-        "mac_address": "609c.9f31.b183",
-        "speed": 0
-    },
-    "GigabitEthernet1/1/37": {
-        "is_enabled": false,
-        "description": "",
-        "last_flapped": 496349,
-        "is_up": false,
-        "mac_address": "609c.9f31.b184",
-        "speed": 0
-    },
-    "GigabitEthernet1/1/38": {
-        "is_enabled": false,
-        "description": "",
-        "last_flapped": 496349,
-        "is_up": false,
-        "mac_address": "609c.9f31.b185",
-        "speed": 0
-    },
-    "GigabitEthernet1/1/39": {
-        "is_enabled": false,
-        "description": "",
-        "last_flapped": 496349,
-        "is_up": false,
-        "mac_address": "609c.9f31.b186",
-        "speed": 0
-    },
-    "10GigabitEthernet1/2/4": {
-        "is_enabled": false,
-        "description": "",
-        "last_flapped": 496349,
-        "is_up": false,
-        "mac_address": "609c.9f31.b194",
-        "speed": 0
-    },
-    "10GigabitEthernet1/2/2": {
-        "is_enabled": false,
-        "description": "",
-        "last_flapped": 496349,
-        "is_up": false,
-        "mac_address": "609c.9f31.b192",
-        "speed": 0
-    },
-    "10GigabitEthernet1/2/3": {
-        "is_enabled": false,
-        "description": "",
-        "last_flapped": 496349,
-        "is_up": false,
-        "mac_address": "609c.9f31.b193",
-        "speed": 0
-    },
-    "10GigabitEthernet1/2/1": {
-        "is_enabled": false,
-        "description": "",
-        "last_flapped": 496349,
-        "is_up": false,
-        "mac_address": "609c.9f31.b191",
-        "speed": 0
-    },
-    "40GigabitEthernet1/4/1": {
-        "is_enabled": false,
-        "description": "",
-        "last_flapped": 496347,
-        "is_up": true,
-        "mac_address": "609c.9f31.b199",
-        "speed": 40000
-    }
+  "40GigabitEthernet1/3/1": {
+    "is_enabled": false,
+    "description": "",
+    "last_flapped": 496347.0,
+    "is_up": true,
+    "mac_address": "609c.9f31.b195",
+    "speed": 40000
+  },
+  "GigabitEthernet1/1/18": {
+    "is_enabled": false,
+    "description": "",
+    "last_flapped": 496349.0,
+    "is_up": false,
+    "mac_address": "609c.9f31.b171",
+    "speed": 0
+  },
+  "GigabitEthernet1/1/48": {
+    "is_enabled": false,
+    "description": "",
+    "last_flapped": 496349.0,
+    "is_up": false,
+    "mac_address": "609c.9f31.b18f",
+    "speed": 0
+  },
+  "GigabitEthernet1/1/45": {
+    "is_enabled": false,
+    "description": "",
+    "last_flapped": 496349.0,
+    "is_up": false,
+    "mac_address": "609c.9f31.b18c",
+    "speed": 0
+  },
+  "GigabitEthernet1/1/44": {
+    "is_enabled": false,
+    "description": "",
+    "last_flapped": 496349.0,
+    "is_up": false,
+    "mac_address": "609c.9f31.b18b",
+    "speed": 0
+  },
+  "GigabitEthernet1/1/47": {
+    "is_enabled": false,
+    "description": "",
+    "last_flapped": 496349.0,
+    "is_up": false,
+    "mac_address": "609c.9f31.b18e",
+    "speed": 0
+  },
+  "GigabitEthernet1/1/46": {
+    "is_enabled": false,
+    "description": "",
+    "last_flapped": 496349.0,
+    "is_up": false,
+    "mac_address": "609c.9f31.b18d",
+    "speed": 0
+  },
+  "GigabitEthernet1/1/41": {
+    "is_enabled": false,
+    "description": "",
+    "last_flapped": 496349.0,
+    "is_up": false,
+    "mac_address": "609c.9f31.b188",
+    "speed": 0
+  },
+  "GigabitEthernet1/1/40": {
+    "is_enabled": false,
+    "description": "",
+    "last_flapped": 496349.0,
+    "is_up": false,
+    "mac_address": "609c.9f31.b187",
+    "speed": 0
+  },
+  "GigabitEthernet1/1/43": {
+    "is_enabled": false,
+    "description": "",
+    "last_flapped": 496349.0,
+    "is_up": false,
+    "mac_address": "609c.9f31.b18a",
+    "speed": 0
+  },
+  "GigabitEthernet1/1/42": {
+    "is_enabled": false,
+    "description": "",
+    "last_flapped": 496349.0,
+    "is_up": false,
+    "mac_address": "609c.9f31.b189",
+    "speed": 0
+  },
+  "GigabitEthernet1/1/29": {
+    "is_enabled": false,
+    "description": "",
+    "last_flapped": 496349.0,
+    "is_up": false,
+    "mac_address": "609c.9f31.b17c",
+    "speed": 0
+  },
+  "GigabitEthernet1/1/28": {
+    "is_enabled": false,
+    "description": "",
+    "last_flapped": 496349.0,
+    "is_up": false,
+    "mac_address": "609c.9f31.b17b",
+    "speed": 0
+  },
+  "GigabitEthernet1/1/27": {
+    "is_enabled": false,
+    "description": "",
+    "last_flapped": 496349.0,
+    "is_up": false,
+    "mac_address": "609c.9f31.b17a",
+    "speed": 0
+  },
+  "GigabitEthernet1/1/26": {
+    "is_enabled": false,
+    "description": "",
+    "last_flapped": 496349.0,
+    "is_up": false,
+    "mac_address": "609c.9f31.b179",
+    "speed": 0
+  },
+  "GigabitEthernet1/1/25": {
+    "is_enabled": false,
+    "description": "",
+    "last_flapped": 496349.0,
+    "is_up": false,
+    "mac_address": "609c.9f31.b178",
+    "speed": 0
+  },
+  "GigabitEthernet1/1/24": {
+    "is_enabled": false,
+    "description": "",
+    "last_flapped": 496349.0,
+    "is_up": false,
+    "mac_address": "609c.9f31.b177",
+    "speed": 0
+  },
+  "GigabitEthernet1/1/23": {
+    "is_enabled": false,
+    "description": "",
+    "last_flapped": 496349.0,
+    "is_up": false,
+    "mac_address": "609c.9f31.b176",
+    "speed": 0
+  },
+  "GigabitEthernet1/1/22": {
+    "is_enabled": false,
+    "description": "",
+    "last_flapped": 496349.0,
+    "is_up": false,
+    "mac_address": "609c.9f31.b175",
+    "speed": 0
+  },
+  "GigabitEthernet1/1/21": {
+    "is_enabled": false,
+    "description": "",
+    "last_flapped": 496349.0,
+    "is_up": false,
+    "mac_address": "609c.9f31.b174",
+    "speed": 0
+  },
+  "GigabitEthernet1/1/20": {
+    "is_enabled": false,
+    "description": "",
+    "last_flapped": 496349.0,
+    "is_up": false,
+    "mac_address": "609c.9f31.b173",
+    "speed": 0
+  },
+  "GigabitEthernet1/1/8": {
+    "is_enabled": false,
+    "description": "",
+    "last_flapped": 496349.0,
+    "is_up": false,
+    "mac_address": "609c.9f31.b167",
+    "speed": 0
+  },
+  "GigabitEthernet1/1/9": {
+    "is_enabled": false,
+    "description": "",
+    "last_flapped": 496349.0,
+    "is_up": false,
+    "mac_address": "609c.9f31.b168",
+    "speed": 0
+  },
+  "GigabitEthernet1/1/33": {
+    "is_enabled": false,
+    "description": "",
+    "last_flapped": 496349.0,
+    "is_up": false,
+    "mac_address": "609c.9f31.b180",
+    "speed": 0
+  },
+  "GigabitEthernet1/1/1": {
+    "is_enabled": false,
+    "description": "to196PC",
+    "last_flapped": 496389.0,
+    "is_up": false,
+    "mac_address": "609c.9f31.b160",
+    "speed": 0
+  },
+  "GigabitEthernet1/1/2": {
+    "is_enabled": false,
+    "description": "",
+    "last_flapped": 496349.0,
+    "is_up": false,
+    "mac_address": "609c.9f31.b161",
+    "speed": 0
+  },
+  "GigabitEthernet1/1/3": {
+    "is_enabled": false,
+    "description": "",
+    "last_flapped": 496349.0,
+    "is_up": false,
+    "mac_address": "609c.9f31.b162",
+    "speed": 0
+  },
+  "GigabitEthernet1/1/4": {
+    "is_enabled": false,
+    "description": "",
+    "last_flapped": 496349.0,
+    "is_up": false,
+    "mac_address": "609c.9f31.b163",
+    "speed": 0
+  },
+  "GigabitEthernet1/1/5": {
+    "is_enabled": false,
+    "description": "",
+    "last_flapped": 496349.0,
+    "is_up": false,
+    "mac_address": "609c.9f31.b164",
+    "speed": 0
+  },
+  "GigabitEthernet1/1/6": {
+    "is_enabled": false,
+    "description": "",
+    "last_flapped": 496349.0,
+    "is_up": false,
+    "mac_address": "609c.9f31.b165",
+    "speed": 0
+  },
+  "GigabitEthernet1/1/7": {
+    "is_enabled": false,
+    "description": "",
+    "last_flapped": 496349.0,
+    "is_up": false,
+    "mac_address": "609c.9f31.b166",
+    "speed": 0
+  },
+  "GigEthernetmgmt1": {
+    "is_enabled": false,
+    "description": "",
+    "last_flapped": 496349.0,
+    "is_up": true,
+    "mac_address": "609c.9f31.b160",
+    "speed": 1000
+  },
+  "GigabitEthernet1/1/12": {
+    "is_enabled": false,
+    "description": "",
+    "last_flapped": 496349.0,
+    "is_up": false,
+    "mac_address": "609c.9f31.b16b",
+    "speed": 0
+  },
+  "GigabitEthernet1/1/13": {
+    "is_enabled": false,
+    "description": "",
+    "last_flapped": 496349.0,
+    "is_up": false,
+    "mac_address": "609c.9f31.b16c",
+    "speed": 0
+  },
+  "GigabitEthernet1/1/10": {
+    "is_enabled": false,
+    "description": "",
+    "last_flapped": 496349.0,
+    "is_up": false,
+    "mac_address": "609c.9f31.b169",
+    "speed": 0
+  },
+  "GigabitEthernet1/1/11": {
+    "is_enabled": false,
+    "description": "",
+    "last_flapped": 496349.0,
+    "is_up": false,
+    "mac_address": "609c.9f31.b16a",
+    "speed": 0
+  },
+  "GigabitEthernet1/1/16": {
+    "is_enabled": false,
+    "description": "",
+    "last_flapped": 496349.0,
+    "is_up": false,
+    "mac_address": "609c.9f31.b16f",
+    "speed": 0
+  },
+  "GigabitEthernet1/1/17": {
+    "is_enabled": false,
+    "description": "",
+    "last_flapped": 496349.0,
+    "is_up": false,
+    "mac_address": "609c.9f31.b170",
+    "speed": 0
+  },
+  "GigabitEthernet1/1/14": {
+    "is_enabled": false,
+    "description": "",
+    "last_flapped": 496349.0,
+    "is_up": false,
+    "mac_address": "609c.9f31.b16d",
+    "speed": 0
+  },
+  "GigabitEthernet1/1/15": {
+    "is_enabled": false,
+    "description": "",
+    "last_flapped": 496349.0,
+    "is_up": false,
+    "mac_address": "609c.9f31.b16e",
+    "speed": 0
+  },
+  "GigabitEthernet1/1/30": {
+    "is_enabled": false,
+    "description": "",
+    "last_flapped": 496349.0,
+    "is_up": false,
+    "mac_address": "609c.9f31.b17d",
+    "speed": 0
+  },
+  "GigabitEthernet1/1/31": {
+    "is_enabled": false,
+    "description": "",
+    "last_flapped": 496349.0,
+    "is_up": false,
+    "mac_address": "609c.9f31.b17e",
+    "speed": 0
+  },
+  "GigabitEthernet1/1/32": {
+    "is_enabled": false,
+    "description": "",
+    "last_flapped": 496349.0,
+    "is_up": false,
+    "mac_address": "609c.9f31.b17f",
+    "speed": 0
+  },
+  "GigabitEthernet1/1/19": {
+    "is_enabled": false,
+    "description": "",
+    "last_flapped": 496349.0,
+    "is_up": false,
+    "mac_address": "609c.9f31.b172",
+    "speed": 0
+  },
+  "GigabitEthernet1/1/34": {
+    "is_enabled": false,
+    "description": "",
+    "last_flapped": 496349.0,
+    "is_up": false,
+    "mac_address": "609c.9f31.b181",
+    "speed": 0
+  },
+  "GigabitEthernet1/1/35": {
+    "is_enabled": false,
+    "description": "",
+    "last_flapped": 496349.0,
+    "is_up": false,
+    "mac_address": "609c.9f31.b182",
+    "speed": 0
+  },
+  "GigabitEthernet1/1/36": {
+    "is_enabled": false,
+    "description": "",
+    "last_flapped": 496349.0,
+    "is_up": false,
+    "mac_address": "609c.9f31.b183",
+    "speed": 0
+  },
+  "GigabitEthernet1/1/37": {
+    "is_enabled": false,
+    "description": "",
+    "last_flapped": 496349.0,
+    "is_up": false,
+    "mac_address": "609c.9f31.b184",
+    "speed": 0
+  },
+  "GigabitEthernet1/1/38": {
+    "is_enabled": false,
+    "description": "",
+    "last_flapped": 496349.0,
+    "is_up": false,
+    "mac_address": "609c.9f31.b185",
+    "speed": 0
+  },
+  "GigabitEthernet1/1/39": {
+    "is_enabled": false,
+    "description": "",
+    "last_flapped": 496349.0,
+    "is_up": false,
+    "mac_address": "609c.9f31.b186",
+    "speed": 0
+  },
+  "10GigabitEthernet1/2/4": {
+    "is_enabled": false,
+    "description": "",
+    "last_flapped": 496349.0,
+    "is_up": false,
+    "mac_address": "609c.9f31.b194",
+    "speed": 0
+  },
+  "10GigabitEthernet1/2/2": {
+    "is_enabled": false,
+    "description": "",
+    "last_flapped": 496349.0,
+    "is_up": false,
+    "mac_address": "609c.9f31.b192",
+    "speed": 0
+  },
+  "10GigabitEthernet1/2/3": {
+    "is_enabled": false,
+    "description": "",
+    "last_flapped": 496349.0,
+    "is_up": false,
+    "mac_address": "609c.9f31.b193",
+    "speed": 0
+  },
+  "10GigabitEthernet1/2/1": {
+    "is_enabled": false,
+    "description": "",
+    "last_flapped": 496349.0,
+    "is_up": false,
+    "mac_address": "609c.9f31.b191",
+    "speed": 0
+  },
+  "40GigabitEthernet1/4/1": {
+    "is_enabled": false,
+    "description": "",
+    "last_flapped": 496347.0,
+    "is_up": true,
+    "mac_address": "609c.9f31.b199",
+    "speed": 40000
+  }
 }

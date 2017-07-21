@@ -3,7 +3,7 @@ from utils import read_txt_file, convert_uptime
 import re
   
 def parse_get_facts(text):
-    tplt = read_txt_file("napalm_brocade_fastiron/utils/textfsm_templates/fastiron_show_version.template")
+    tplt = read_txt_file("napalm_brocade_fastiron/utils/textfsm_templates/fastiron_show_version.tpl")
     t = textfsm.TextFSM(tplt)
     result = t.ParseText(text)
     if result is not None:

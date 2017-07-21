@@ -15,90 +15,217 @@
 """Tests."""
 
 import unittest
-import pytest
 import re
+import difflib
+import mock
+from napalm_base import exceptions
+from napalm_base.test import models
 
 from napalm_brocade_fastiron import fastiron
-from napalm_base.test.base import TestConfigNetworkDriver
+# from napalm_base.test.base import TestConfigNetworkDriver
 import json
-
+from unittest import SkipTest
 from napalm_base.utils import py23_compat
+from napalm_brocade_fastiron.utils.utils import read_txt_file
 
-@pytest.mark.usefixtures("setUpClass")
-class TestConfigDriver(unittest.TestCase, TestConfigNetworkDriver):
+
+def send_command(command):
+    """Wrapper for self.device.send.command().
+    If command is a list will iterate through commands until valid command.
+    """
+    output = ""
+
+    try:
+        if isinstance(command, list):
+            for cmd in command:
+                # output = self.session.send_command(cmd)
+                cmd = re.sub(r'[\[\]\*\^\+\s\|]', '_', cmd)
+                output = output + \
+                    read_txt_file(
+                        "test/unit/fastiron/mock_data/{}.txt".format(cmd)).read()
+                #         return py23_compat.text_type(output)
+
+        else:
+            cmd = re.sub(r'[\[\]\*\^\+\s\|]', '_', command)
+            output = read_txt_file(
+                "test/unit/fastiron/mock_data/{}.txt".format(cmd)).read()
+        return output
+    except:
+        raise
+
+
+class TestConfigDriver(unittest.TestCase):
     """Group of tests that test Configuration related methods."""
+
+    def send_command(command):
+        return _send_command(command)
 
     @classmethod
     def setUpClass(cls):
-        """Run before starting the tests."""
-        hostname = '127.0.0.1'
-        username = 'vagrant'
-        password = 'vagrant'
-        cls.vendor = 'fastiron'
         cls.mock = True
 
-        optional_args = { }
-        cls.device = fastiron.FastIronDriver(hostname, username, password, timeout=60,
-                                             optional_args=optional_args)
+        ipaddr = "10.21.237.131"
+        user = "test"
 
-        if cls.mock:
-            cls.device.device = FakeDevice()
-        else:
+        password = "test"
+        secret = "test"
+
+        cls.vendor = 'test/unit/fastiron'
+        cls.device = fastiron.FastIronDriver(ipaddr, user, password)
+        if not cls.mock:
             cls.device.open()
 
-        cls.device.load_replace_candidate(filename='%s/initial.conf' % cls.vendor)
-        cls.device.commit_config()
-
-#
-# class TestGetterDriver(unittest.TestCase, TestGettersNetworkDriver):
-#     """Group of tests that test getters."""
-#
-#     @classmethod
-#     def setUpClass(cls):
-#         """Run before starting the tests."""
-#         cls.mock = True
-#
-#         hostname = '127.0.0.1'
-#         username = 'vagrant'
-#         password = 'vagrant'
-#         cls.vendor = 'fastiron'
-#
-#         optional_args = {'port': 12443, }
-#         cls.device = fastiron.FastIronDriver(hostname, username, password, timeout=60,
-#                                              optional_args=optional_args)
-#
-#         if cls.mock:
-#             # cls.device.device = FakeDevice()
-#             cls.device = FakeDevice()
-#         else:
-#             cls.device.open()
-
-
-class FakeDevice:
-    """Test double."""
+    @staticmethod
+    def read_file(filename):
+        with open(filename, 'r') as f:
+            return f.read().strip()
 
     @staticmethod
-    def read_json_file(filename):
-        """Return the content of a file with content formatted as json."""
-        with open(filename) as data_file:
-            return json.load(data_file)
+    def print_diff_strings(orig, new):
+        for line in difflib.context_diff(orig.splitlines(), new.splitlines()):
+            print(line)
+    #
+    # @mock.patch('napalm_brocade_fastiron.fastiron.FastIronDriver._send_command', side_effect=send_command)
+    # def test_replacing_and_committing_config(self, mock):
+    #     try:
+    #         self.device.load_replace_candidate(filename='%s/new_good.conf' % self.vendor)
+    #         self.device.commit_config()
+    #     except NotImplementedError:
+    #         raise SkipTest()
+    #
+    #     # The diff should be empty as the configuration has been committed already
+    #     diff = self.device.compare_config()
+    #
+    #     # Reverting changes
+    #     self.device.load_replace_candidate(filename='%s/initial.conf' % self.vendor)
+    #     self.device.commit_config()
+    #
+    #     self.assertEqual(len(diff), 0)
+    #
+    # @mock.patch('napalm_brocade_fastiron.fastiron.FastIronDriver._send_command', side_effect=send_command)
+    # def test_replacing_config_with_typo(self, mock):
+    #     result = False
+    #     try:
+    #         self.device.load_replace_candidate(filename='%s/new_typo.conf' % self.vendor)
+    #         self.device.commit_config()
+    #     except NotImplementedError:
+    #         raise SkipTest()
+    #     except exceptions.ReplaceConfigException:
+    #         self.device.load_replace_candidate(filename='%s/initial.conf' % self.vendor)
+    #         diff = self.device.compare_config()
+    #         self.device.discard_config()
+    #         result = True and len(diff) == 0
+    #     self.assertTrue(result)
+    #
+    # @mock.patch('napalm_brocade_fastiron.fastiron.FastIronDriver._send_command', side_effect=send_command)
+    # def test_replacing_config_and_diff_and_discard(self, mock):
+    #     intended_diff = self.read_file('%s/new_good.diff' % self.vendor)
+    #
+    #     self.device.load_replace_candidate(filename='%s/new_good.conf' % self.vendor)
+    #     commit_diff = self.device.compare_config()
+    #
+    #     print(commit_diff)
+    #
+    #     self.device.discard_config()
+    #     discard_diff = self.device.compare_config()
+    #     self.device.discard_config()
+    #
+    #     result = (commit_diff == intended_diff) and (discard_diff == '')
+    #     self.assertTrue(result)
+    #
+    # @mock.patch('napalm_brocade_fastiron.fastiron.FastIronDriver._send_command', side_effect=send_command)
+    # def test_replacing_config_and_rollback(self, mock):
+    #     self.device.load_replace_candidate(filename='%s/new_good.conf' % self.vendor)
+    #     orig_diff = self.device.compare_config()
+    #     self.device.commit_config()
+    #
+    #     # Now we rollback changes
+    #     replace_config_diff = self.device.compare_config()
+    #     self.device.rollback()
+    #
+    #     # We try to load the config again. If the rollback was successful new diff should be
+    #     # like the first one
+    #     self.device.load_replace_candidate(filename='%s/new_good.conf' % self.vendor)
+    #     last_diff = self.device.compare_config()
+    #     self.device.discard_config()
+    #
+    #     result = (orig_diff == last_diff) and (len(replace_config_diff) == 0)
+    #
+    #     self.assertTrue(result)
+    #
+    # @mock.patch('napalm_brocade_fastiron.fastiron.FastIronDriver._send_command', side_effect=send_command)
+    # def test_merge_configuration(self, mock):
+    #     intended_diff = self.read_file('%s/merge_good.diff' % self.vendor)
+    #
+    #     self.device.load_merge_candidate(filename='%s/merge_good.conf' % self.vendor)
+    #     self.device.commit_config()
+    #
+    #     # Reverting changes
+    #     self.device.load_replace_candidate(filename='%s/initial.conf' % self.vendor)
+    #     diff = self.device.compare_config()
+    #
+    #     print(diff)
+    #
+    #     self.device.commit_config()
+    #
+    #     self.assertEqual(diff, intended_diff)
+    #
+    # @mock.patch('napalm_brocade_fastiron.fastiron.FastIronDriver._send_command', side_effect=send_command)
+    # def test_merge_configuration_typo_and_rollback(self, mock):
+    #     result = False
+    #     try:
+    #         self.device.load_merge_candidate(filename='%s/merge_typo.conf' % self.vendor)
+    #         self.device.compare_config()
+    #         self.device.commit_config()
+    #         raise Exception("We shouldn't be here")
+    #     except exceptions.MergeConfigException:
+    #         # We load the original config as candidate. If the commit failed cleanly the
+    #         # compare_config should be empty
+    #         self.device.load_replace_candidate(filename='%s/initial.conf' % self.vendor)
+    #         result = self.device.compare_config() == ''
+    #         self.device.discard_config()
+    #
+    #     self.assertTrue(result)
 
-    @staticmethod
-    def read_txt_file(filename):
-        """Return the content of a file."""
-        with open(filename) as data_file:
-            return data_file.read()
+    @mock.patch('napalm_brocade_fastiron.fastiron.FastIronDriver._send_command', side_effect=send_command)
+    def test_load_template(self, mock):
+        """Test load_template method."""
+        result = self.device.load_template(
+            'set_hostname', hostname='my-hostname')
+        print("DEBUG: {}".format(result))
 
-    def send_command_expect(self, command, **kwargs):
-        """Fake execute a command in the device by just returning the content of a file."""
-        cmd = re.sub(r'[\[\]\*\^\+\s\|]', '_', command)
-        output = self.read_txt_file('test/unit/fastiron/mock_data/{}.txt'.format(cmd))
-        return py23_compat.text_type(output)
+        diff = self.device.compare_config()
+        self.device.discard_config()
+        self.assertFalse(diff is not '')
 
-    def send_command(self, command, **kwargs):
-        """Fake execute a command in the device by just returning the content of a file."""
-        return self.send_command_expect(command)
 
+# class FakeDevice(fastiron.FastIronDriver):
+#     """Test double."""
+#
+#     @staticmethod
+#     def read_json_file(filename):
+#         """Return the content of a file with content formatted as json."""
+#         with open(filename) as data_file:
+#             return json.load(data_file)
+#
+#     @staticmethod
+#     def read_txt_file(filename):
+#         """Return the content of a file."""
+#         with open(filename) as data_file:
+#             return data_file.read()
+#
+#     def send_command_expect(self, command, **kwargs):
+#         """Fake execute a command in the device by just returning the content of a file."""
+#         cmd = re.sub(r'[\[\]\*\^\+\s\|]', '_', command)
+#         output = self.read_txt_file('test/unit/fastiron/mock_data/{}.txt'.format(cmd))
+#         return py23_compat.text_type(output)
+#
+#     def send_command(self, command, **kwargs):
+#         """Fake execute a command in the device by just returning the content of a file."""
+#         return self.send_command_expect(command)
+#
+#     def disconnect(self, mock):
+#         pass
 
 
 if __name__ == '__main__':

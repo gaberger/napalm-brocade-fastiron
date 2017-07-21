@@ -22,7 +22,7 @@ from napalm_base.base import NetworkDriver
 from napalm_base.exceptions import (
     ConnectionException,
     ReplaceConfigException,
-    )
+)
 
 from utils.utils import read_txt_file, convert_uptime, convert_speed
 from utils.parsers import parse_get_facts
@@ -31,10 +31,13 @@ from netmiko import ConnectHandler
 import textfsm
 import socket
 import StringIO
+import difflib
+import pprint
 
 
 class FastIronDriver(NetworkDriver):
     """Napalm driver for FastIron."""
+
     def __init__(self, hostname, username, password, timeout=60, optional_args=None):
         """Constructor."""
         self.hostname = hostname
@@ -82,7 +85,7 @@ class FastIronDriver(NetworkDriver):
 
     def _show_version(self):
         output = self._send_command(['show version'])
-        tplt = read_txt_file("napalm_brocade_fastiron/utils/textfsm_templates/fastiron_show_version.template")
+        tplt = read_txt_file("napalm_brocade_fastiron/utils/textfsm_templates/fastiron_show_version.tpl")
         t = textfsm.TextFSM(tplt)
         result = t.ParseText(output).pop()
         result = {"version": result[0],
@@ -98,20 +101,20 @@ class FastIronDriver(NetworkDriver):
         The keys for the first dictionary will be the interfaces in the devices. """
         interfaces = {}
         output = self._send_command(['show interfaces'])
-        tplt = read_txt_file("napalm_brocade_fastiron/utils/textfsm_templates/fastiron_show_interfaces.template")
+        tplt = read_txt_file("napalm_brocade_fastiron/utils/textfsm_templates/fastiron_show_interfaces.tpl")
         t = textfsm.TextFSM(tplt)
         result = t.ParseText(output)
         if result is not None:
             for i in result:
                 entry = {
-                    i[0] : {
-                        "is_enabled":  True if i[1] == 'enabled' else False,
+                    i[0]: {
+                        "is_enabled": True if i[1] == 'enabled' else False,
                         "is_up": True if i[2] == 'up' else False,
                         "mac_address": i[3],
                         "speed": 0 if i[4] == 'unknown' else convert_speed(i[4]),
                         "description": unicode(i[5]),
-                        "last_flapped": convert_uptime(i[6], i[7], i[8], i[9]) # TODO Check
-                        }
+                        "last_flapped": convert_uptime(i[6], i[7], i[8], i[9])  # TODO Check
+                    }
                 }
                 interfaces.update(entry)
         return interfaces
@@ -119,13 +122,13 @@ class FastIronDriver(NetworkDriver):
     def get_arp_table(self):
         table = []
         output = self._send_command(['show arp'])
-        tplt = read_txt_file("napalm_brocade_fastiron/utils/textfsm_templates/fastiron_show_arp.template")
+        tplt = read_txt_file("napalm_brocade_fastiron/utils/textfsm_templates/fastiron_show_arp.tpl")
         t = textfsm.TextFSM(tplt)
         result = t.ParseText(output)
         if result is not None:
             for i in result:
                 entry = {
-                    "interface" : i[2],
+                    "interface": i[2],
                     "mac": i[1],
                     "ip": i[0],
                     "age": float(i[3])
@@ -134,12 +137,12 @@ class FastIronDriver(NetworkDriver):
         return table
 
     def get_config(self, retrieve='all'):
-        configs = { 
-                 'startup': "",
-                 'running': "",
-                 'candidate': ""}
+        # Not doing candidate
+        config = {'running': '',
+                  'startup': '',
+                  'candidate': unicode('')}
 
-        def parse_stream(stream, config):
+        def parse_stream(stream):
 
             running_config_buffer = StringIO.StringIO()
             startup_config_buffer = StringIO.StringIO()
@@ -150,7 +153,7 @@ class FastIronDriver(NetworkDriver):
             for line in stringbuffer.readlines():
                 # TODO what order do the commands have to be in?
                 if 'Startup-config' in line:
-                    if not startup:        
+                    if not startup:
                         startup = True
                 if startup:
                     startup_config_buffer.write(line)
@@ -159,29 +162,35 @@ class FastIronDriver(NetworkDriver):
 
             config['running'] = unicode(running_config_buffer.getvalue())
             config['startup'] = unicode(startup_config_buffer.getvalue())
-            config['candidate'] = unicode("")
+
+            assert config['running'] is not ''
+            assert config['startup'] is not ''
 
             running_config_buffer.close()
             startup_config_buffer.close()
-            
-            return config
+
+            return
 
         if retrieve == 'all':
             command = ['show running-config', 'show config']
             output = self._send_command(command)
-            configs = parse_stream(output, configs)
+            parse_stream(output)
 
         if retrieve == 'startup':
             command = 'show config'
             output = self._send_command(command)
-            configs['startup'] = unicode(output)
-            
+
+            config['startup'] = unicode(output)
+
         if retrieve == 'running':
             command = 'show running-config'
             output = self._send_command(command)
-            configs['running'] = unicode(output)
-            
-        return configs
+            config['running'] = unicode(output)
+
+        if retrieve == 'candidate':
+            config['candidate'] = unicode("")
+
+        return config
 
     # TODO Handle Exception
     def commit_config(self):
@@ -191,6 +200,9 @@ class FastIronDriver(NetworkDriver):
 
     def _load_config(self, filename=None, config=None):
         return True, "bar"
+
+    def load_merge_candidate(self, filename=None, config=None):
+        self.load_replace_candidate(filename, config)
 
     def load_replace_candidate(self, filename=None, config=None):
         """
@@ -205,9 +217,8 @@ class FastIronDriver(NetworkDriver):
         if config:
             (return_status, msg) = self._load_config(config=config)
         elif filename:
-            print("DEBUG: Source File {}".format(filename))
             (return_status, msg) = self._load_config(filename=filename)
-            
+
         if not return_status:
             raise ReplaceConfigException(msg)
 
@@ -221,15 +232,15 @@ class FastIronDriver(NetworkDriver):
             raise
 
         facts = {
-                'hostname': "-".join((facts['model'], facts['os_version'])),
-                'fqdn': "-".join((facts['model'], facts['os_version'])),
-                'vendor': u'Brocade',
-                'model': facts['model'],
-                'serial_number': facts['serial_no'],
-                'os_version': facts['os_version'],
-                'uptime': facts['uptime'],
-                'interface_list': interfaces.keys(),
-            }
+            'hostname': "-".join((facts['model'], facts['os_version'])),
+            'fqdn': "-".join((facts['model'], facts['os_version'])),
+            'vendor': u'Brocade',
+            'model': facts['model'],
+            'serial_number': facts['serial_no'],
+            'os_version': facts['os_version'],
+            'uptime': facts['uptime'],
+            'interface_list': interfaces.keys(),
+        }
 
         return facts
 
@@ -251,3 +262,27 @@ class FastIronDriver(NetworkDriver):
             'is_alive': self.device.remote_conn.transport.is_active()
         }
 
+    def compare_config(self):
+        """
+        """
+        # Get configs if not populated into instance
+        difbuf = StringIO.StringIO()
+        config = self.get_config()
+
+        # Strip headers for compare
+        startup = config['startup'].splitlines()[4:]
+        running = config['running'].splitlines()[2:]
+
+        assert startup is not ''
+
+        for line in difflib.unified_diff(running, startup, "Running", "Startup"):
+            filtered_line = str(line).translate(None, "!")
+            difbuf.write(filtered_line)
+
+        diff = difbuf.getvalue()
+        difbuf.close()
+
+        return diff
+
+    def discard_config(self):
+        pass

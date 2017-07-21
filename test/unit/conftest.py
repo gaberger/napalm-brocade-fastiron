@@ -9,7 +9,6 @@ from napalm_base.test.double import BaseTestDouble
 
 from napalm_brocade_fastiron import fastiron
 
-
 @pytest.fixture(scope='class')
 def set_device_parameters(request):
     """Set up the class."""
@@ -70,4 +69,4 @@ class FakeFastIronDriver(BaseTestDouble):
         return py23_compat.text_type(result)
 
     def disconnect(self):
-                pass
+        pass
