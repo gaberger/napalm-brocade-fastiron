@@ -10,6 +10,7 @@ log.setLevel(logging.DEBUG)
 
 debug = True
 
+
 class BrocadeFastironSSH(BaseConnection):
     """Brocade FastIron aka ICX support."""
 
@@ -38,14 +39,6 @@ class BrocadeFastironSSH(BaseConnection):
         if debug:
             print(output)
         return check_string in output
-
-    # def check_telnet_auth(self):
-    #     auth = False
-    #     config = self.get_config(retrieve="running")
-    #     for line in config:
-    #         if "enable telnet authentication" in line:
-    #             auth = True
-    #     return auth
 
     def check_telnet_auth(self):
         auth = False
