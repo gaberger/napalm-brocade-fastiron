@@ -26,7 +26,8 @@ from napalm_base.exceptions import (
 
 from utils.utils import read_txt_file, convert_uptime, convert_speed
 from utils.parsers import parse_get_facts
-from netmiko import ConnectHandler
+# from netmiko import ConnectHandler
+from utils.netmiko_handler import BrocadeFastironSSH
 
 import textfsm
 import socket
@@ -52,13 +53,15 @@ class FastIronDriver(NetworkDriver):
 
     def open(self):
         """Implementation of NAPALM method open."""
-        self.device = ConnectHandler(device_type='brocade_fastiron',
+        self.device = BrocadeFastironSSH(device_type='brocade_fastiron',
                                      ip=self.hostname,
                                      username=self.username,
                                      password=self.password,
-                                     verbose=False,
+                                     port=int(22),
+                                     verbose=True,
                                      use_keys=False,
                                      session_timeout=300)
+
         self.device.session_preparation()
 
     def close(self):
@@ -93,6 +96,23 @@ class FastIronDriver(NetworkDriver):
                   "serial_no": result[2],
                   "uptime": convert_uptime(result[3], result[4], result[5], result[6])}
         return result
+
+    def _show_user(self):
+        output = self._send_command(['show user'])
+        tplt = read_txt_file("napalm_brocade_fastiron/utils/textfsm_templates/fastiron_show_user.tpl")
+        t = textfsm.TextFSM(tplt)
+        result = t.ParseText(output).pop()
+        result = {"username": result[0],
+                  "password": result[1],
+                  "encrypt": result[2],
+                  "privilege": result[3],
+                  "status": result[4],
+                  "expiry": result[5]}
+        return result
+
+
+
+
 
     # Napalm API
 

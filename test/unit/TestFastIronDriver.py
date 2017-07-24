@@ -29,7 +29,7 @@ from napalm_base.utils import py23_compat
 from napalm_brocade_fastiron.utils.utils import read_txt_file
 
 
-def send_command(command):
+def _send_command(command):
     """Wrapper for self.device.send.command().
     If command is a list will iterate through commands until valid command.
     """
@@ -54,6 +54,9 @@ def send_command(command):
         raise
 
 
+
+
+
 class TestConfigDriver(unittest.TestCase):
     """Group of tests that test Configuration related methods."""
 
@@ -62,12 +65,11 @@ class TestConfigDriver(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.mock = True
+        cls.mock = False
 
         ipaddr = "10.21.237.131"
-        user = "test"
-
-        password = "test"
+        user = "admin"
+        password = "admin"
         secret = "test"
 
         cls.vendor = 'test/unit/fastiron'
@@ -190,8 +192,7 @@ class TestConfigDriver(unittest.TestCase):
     @mock.patch('napalm_brocade_fastiron.fastiron.FastIronDriver._send_command', side_effect=send_command)
     def test_load_template(self, mock):
         """Test load_template method."""
-        result = self.device.load_template(
-            'set_hostname', hostname='my-hostname')
+        result = self.device.load_template('set_hostname', hostname='my-hostname')
         print("DEBUG: {}".format(result))
 
         diff = self.device.compare_config()
